@@ -89,8 +89,8 @@ Primary key is `(workspaceId, userId)`. Phase 1 writes exactly one row at signup
 |---|---|---|
 | `id` | uuid PK | |
 | `workspaceId` | uuid FK | |
-| `name` | text | Example: "Chase Checking". |
-| `type` | enum | `CHECKING`, `SAVINGS`, `CREDIT_CARD`, `CASH`, `LOAN` |
+| `name` | text | Example: "Main Cheque Account". |
+| `type` | enum | `CURRENT`, `SAVINGS`, `CREDIT_CARD`, `CASH`, `LOAN` |
 | `openingBalanceMinor` | bigint | Signed, per the sign convention. |
 | `openingDate` | date | |
 | `currency` | char(3) | Denormalised from workspace for safety. Must equal workspace currency (I2). |
@@ -113,7 +113,7 @@ Index: `(workspaceId, isArchived, sortOrder)`.
 | `name` | text | Unique per `(workspaceId, parentId)`. |
 | `type` | enum | `INCOME`, `EXPENSE`. `TRANSFER` reserved. |
 | `icon` | text NULL | Icon key, not an emoji. |
-| `color` | text NULL | Hex. Used by charts. |
+| `colour` | text NULL | Hex. Used by charts. |
 | `isSystem` | boolean | Protects the Uncategorised rows from deletion. |
 | `isArchived`, `archivedAt` | boolean, timestamptz | |
 | `sortOrder` | integer | |
@@ -205,17 +205,17 @@ Partial index on `nextRunDate` where `status = 'ACTIVE'`, for the scheduler's sc
 
 ### DebtProfile (Phase 3)
 `accountId` as PK and FK, `aprBps`, `minimumPaymentMinor`, `originalPrincipalMinor`, `strategy`, `customPriority`.
-Separate from Account because a checking account has no APR and a debt account has no payoff strategy.
+Separate from Account because a current account has no APR and a debt account has no payoff strategy.
 
 ### SavingsGoal (Phase 3)
 `id`, `workspaceId`, `name`, `kind` (`GOAL`, `SINKING_FUND`), `targetMinor`, `targetDate`, `accountId` NULL, `sortOrder`.
 
 ### Project, Task (Phase 4)
-`Project`: `id`, `workspaceId`, `name`, `color`, `isArchived`.
+`Project`: `id`, `workspaceId`, `name`, `colour`, `isArchived`.
 `Task`: `id`, `workspaceId`, `projectId` NULL, `title`, `notes`, `priority`, `status`, `dueDate`, `completedAt`, `recurrenceRuleId` NULL.
 
 ### Habit, HabitLog (Phase 5)
-`Habit`: `id`, `workspaceId`, `name`, `targetPerPeriod`, `cadence`, `color`, `sortOrder`, `isArchived`.
+`Habit`: `id`, `workspaceId`, `name`, `targetPerPeriod`, `cadence`, `colour`, `sortOrder`, `isArchived`.
 `HabitLog`: `habitId`, `date`, `state`. UNIQUE `(habitId, date)`.
 
 ### MealPlanEntry, GroceryItem (Phase 7)

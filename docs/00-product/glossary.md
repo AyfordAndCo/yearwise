@@ -38,7 +38,7 @@ If a word is not on this page and you need it, add it here before using it in co
 | Term | Definition |
 |---|---|
 | **Account** | A real-world container of money: a bank account, a credit card, a wallet, a loan. |
-| **Account type** | `CHECKING`, `SAVINGS`, `CREDIT_CARD`, `CASH`, `LOAN`. |
+| **Account type** | `CURRENT`, `SAVINGS`, `CREDIT_CARD`, `CASH`, `LOAN`. `CURRENT` is deliberately not called `CHECKING`: "checking account" is North American. The display label is localised - "Cheque account" for `en-ZA`, "Current account" for `en-GB`. |
 | **Opening balance** | The balance of the account on `openingDate`, before any transaction recorded in this app. A property of the Account, not a seeded transaction. |
 | **Current balance** | **Derived, never stored:** `openingBalanceMinor + sum(transactions)`. Storing it is a cache, and caches drift. |
 | **Sign convention** | `amountMinor > 0` means money **into** the account. `amountMinor < 0` means money **out of** the account. Holds for every account type. A credit card purchase is negative, so a card you owe on has a **negative balance**. |

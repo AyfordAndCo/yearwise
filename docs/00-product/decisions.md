@@ -12,6 +12,12 @@ Status values: `Proposed` | `Accepted` | `Superseded by D-x` | `Rejected`.
 
 ## Product decisions
 
+### D0 - Product name: Yearwise
+**Status:** Accepted
+**Decision:** The product is **Yearwise**. Repository `AyfordAndCo/yearwise`. Package scope `@yearwise/*`.
+**Rationale:** Confirmed by the owner. The original spreadsheet product used the same spelling, so the name stays recognisable to existing customers while the repository has been renamed to match.
+**Consequence:** Every package scope, domain and Stripe product uses `yearwise`.
+
 ### D1 - Positioning: finance-first, life OS second
 **Status:** Accepted
 **Decision:** Build the financial engine first (accounts, ledger, budgets, debt, savings). Tasks, habits and meals follow as independent modules.
@@ -112,7 +118,7 @@ Status values: `Proposed` | `Accepted` | `Superseded by D-x` | `Rejected`.
 
 | ID | Question | Blocking |
 |---|---|---|
-| O1 | Product name: Yearwize or Yearwise? | Domains, package scope, Stripe products, branding |
+| ~~O1~~ | ~~Product name~~ Resolved: **Yearwise**. See D0. | - |
 | O2 | Auth provider choice. **Recommendation: Supabase Auth** - see tech-stack.md | Phase 0 |
 | O3 | Hosting platform. **Recommendation: Vercel + Supabase** - see tech-stack.md | Phase 0 |
 | O4 | Are transactions with `PENDING` status in scope for Phase 2, or deferred with recurrence? | Phase 2 |

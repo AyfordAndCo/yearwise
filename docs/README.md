@@ -45,7 +45,23 @@ docs/
 
 **Decisions are logged, not remembered.** If a choice is made in conversation and not written to `00-product/decisions.md`, it will be re-litigated.
 
-**Terminology is binding.** Every domain noun used in code, schema, API, or UI must appear in `00-product/glossary.md`. If it is missing, add it before using it.
+**Terminology is binding.** Every domain noun used in code, schema, API or UI must appear in `00-product/glossary.md`. If it is missing, add it before using it.
+
+**Language is South African English.** This applies to documentation, code identifiers, UI copy, commit messages and database enum values. It is a spelling rule, so it is mechanical and it is enforced in review:
+
+| Use | Not |
+|---|---|
+| organise, categorise, prioritise, normalise, serialise, authorise, minimise, optimise, utilise, summarise, synchronise | -ize forms |
+| colour, behaviour, favour, honour, labour, neighbour | -or forms |
+| cancelled, modelling, labelled, travelled, fuelled, signalled | single-consonant forms |
+| centre, litre, fibre, defence, licence (noun), practise (verb), judgement | -er, -se, -ce, -ice forms |
+| instalment, enrolment, fulfilment, skilful, ageing | double-consonant forms |
+| grey | gray |
+| cheque account | checking account |
+
+Enum values follow the same rule. `CURRENT`, not `CHECKING`. `Uncategorised`, not `Uncategorized`.
+
+**Locale defaults.** Dates render as `DD/MM/YYYY`, weeks start on Monday, and currency renders through the workspace locale. None of these are hardcoded; they come from `Workspace.locale`, `Workspace.dateFormat` and `Workspace.weekStartDay`.
 
 ## Reading order for a new contributor
 

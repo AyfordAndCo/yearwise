@@ -35,7 +35,7 @@ A user's money sits in several places: a current account, a savings account, one
 
 | Type | Display sign | Counts in net worth |
 |---|---|---|
-| `CHECKING` | as stored | yes |
+| `CURRENT` | as stored | yes |
 | `SAVINGS` | as stored | yes |
 | `CASH` | as stored | yes |
 | `CREDIT_CARD` | flipped - shows amount owed as positive | yes, contributing negatively |
@@ -91,7 +91,7 @@ No new invariants. Existing invariants that bind here:
 
 ## Edge cases
 
-- **Negative opening balance on a checking account.** Permitted. An overdrawn account is real.
+- **Negative opening balance on a current account.** Permitted. An overdrawn account is real.
 - **Opening balance of zero.** Permitted and common.
 - **Archiving an account with a non-zero balance.** Permitted, with a warning that the balance will be excluded from the default net-worth figure. Not blocked - users close accounts with residual balances.
 - **Archiving the only account.** Permitted. The accounts screen shows an empty state and a link to create one.
@@ -117,7 +117,7 @@ No new invariants. Existing invariants that bind here:
 - [ ] Adding an expense of `25.00` to that account shows a balance of `975.00`.
 - [ ] Deleting that transaction returns the balance to exactly `1,000.00`.
 - [ ] A credit card with an opening balance of `-500.00` displays `500.00 owed` and reduces net worth by `500.00`.
-- [ ] A checking account at `1,000.00` plus a credit card at `-500.00` yields a net worth of `500.00`.
+- [ ] A current account at `1,000.00` plus a credit card at `-500.00` yields a net worth of `500.00`.
 - [ ] Archiving an account removes it from the net-worth total and leaves every one of its transactions intact and visible in the ledger.
 - [ ] Listing 20 accounts issues a bounded number of database queries, independent of the account count.
 - [ ] No API response or database column contains a stored balance.

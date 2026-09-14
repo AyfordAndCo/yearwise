@@ -22,7 +22,7 @@ Status: Draft
 ## Layout
 
 ```
-yearwize/
+yearwise/
   apps/
     web/                  Next.js App Router - the main application
     mobile/               Expo app (Phase 9, not created yet)

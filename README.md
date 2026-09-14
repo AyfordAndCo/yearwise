@@ -1,4 +1,4 @@
-# Yearwize
+# Yearwise
 
 A life operating system: money, budgets, debts, savings, tasks, habits and meals in one place.
 
@@ -21,14 +21,38 @@ Planning phase. No application code yet. The schema is not written. Nothing here
 
 Start at [`docs/README.md`](./docs/README.md).
 
-## Intended stack (provisional, see decisions log)
+## Stack
 
-- **Web:** Next.js (App Router), TypeScript, Tailwind CSS
-- **Data:** PostgreSQL, Prisma, row-level security
-- **Auth:** provider TBD
-- **Monorepo:** pnpm workspaces + Turborepo
-- **Mobile:** deferred to Phase 9
+See [`docs/01-architecture/tech-stack.md`](./docs/01-architecture/tech-stack.md) for the reasoning.
+
+| Layer | Choice |
+|---|---|
+| Language | TypeScript, strict |
+| Web | Next.js, App Router |
+| Styling | Tailwind CSS, shadcn/ui |
+| Data | PostgreSQL, Prisma, row-level security |
+| Auth | Supabase Auth |
+| Charts | Recharts |
+| Monorepo | pnpm workspaces, Turborepo |
+| Hosting | Vercel plus Supabase |
+| Mobile | Deferred to Phase 9 |
+
+## House style
+
+Documentation and code use **South African English**: `organise`, `colour`, `behaviour`, `cancelled`, `modelling`, `instalment`. Never `-ize` forms. Enum values follow the same rule, so the account type is `CURRENT`, not `CHECKING`. See [`docs/README.md`](./docs/README.md).
 
 ## Getting started
 
-Not yet applicable. See `docs/02-phases/phase-0-foundations.md` once written.
+Not yet applicable. Phase 0 has not been built - see [`docs/02-phases/phase-0-foundations.md`](./docs/02-phases/phase-0-foundations.md).
+
+## Status detail
+
+| Area | State |
+|---|---|
+| Product decisions | Accepted (D0 to D6) |
+| Architecture decisions | Accepted (A1 to A10) |
+| Data model | Approved, `schema.prisma` not yet written |
+| Tech stack | Recommended (O2, O3), pending confirmation |
+| Phase 0 | Specified, not started |
+| Phase 1 | Fully specified, not started |
+| Application code | None |
