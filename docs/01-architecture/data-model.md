@@ -1,6 +1,6 @@
 # Data Model
 
-Status: Draft - must be approved before `schema.prisma` is written.
+Status: Approved on 2026-09-14. Unblocks writing schema.prisma.
 
 ## 0. Scope of this document
 
@@ -237,6 +237,6 @@ Separate from Account because a checking account has no APR and a debt account h
 
 ## 8. Open questions
 
-1. **Confirm the sign convention (A2).** Are credit card balances negative by convention in your head? I have chosen negative. This is the single most error-prone convention in the schema and must be settled before any code is written.
+1. ~~Confirm the sign convention (A2).~~ **Confirmed on 2026-09-14.** Negative means owed. Recorded as accepted, not assumed.
 2. **Is an audit trail required on transaction edit and delete?** I have chosen hard delete. An audit trail changes the design and adds a predicate to every aggregate.
 3. **Is Uncategorised a real row per workspace, or a nullable `categoryId`?** I have chosen a real row. It keeps aggregates simple and lets the user rename it.

@@ -26,9 +26,9 @@ A feature may not enter `In build` until its document status is `Approved`.
 
 | ID | Feature | Phase | Doc | Status |
 |---|---|---|---|---|
-| FEAT-FIN-01 | Accounts | 1 | - | Not written |
-| FEAT-FIN-02 | Categories | 1 | - | Not written |
-| FEAT-FIN-03 | Transaction ledger | 1 | - | Not written |
+| FEAT-FIN-01 | Accounts | 1 | [feat-fin-01-accounts.md](./feat-fin-01-accounts.md) | Draft |
+| FEAT-FIN-02 | Categories | 1 | [feat-fin-02-categories.md](./feat-fin-02-categories.md) | Draft |
+| FEAT-FIN-03 | Transaction ledger | 1 | [feat-fin-03-transaction-ledger.md](./feat-fin-03-transaction-ledger.md) | **Approved** |
 | FEAT-FIN-04 | Cash-flow dashboard | 1 | - | Not written |
 | FEAT-FIN-05 | Recurring rules engine | 2 | - | Not written |
 | FEAT-FIN-06 | Budget lines and strategies | 2 | - | Not written |

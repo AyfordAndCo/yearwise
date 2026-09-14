@@ -4,8 +4,8 @@ Status values: `Done` | `In progress` | `Not started` | `Frozen`
 
 | Phase | Name | Goal in one line | Depends on | Status |
 |---|---|---|---|---|
-| 0 | Foundations | Repo, monorepo, CI, auth shell, design tokens, deployed hello world | - | Not started |
-| 1 | Financial Core | Accounts, categories, ledger, cash-flow dashboard | 0 | Not started |
+| 0 | [Foundations](./phase-0-foundations.md) | Repo, monorepo, CI, auth shell, design tokens, deployed hello world | - | Not started |
+| 1 | [Financial Core](./phase-1-financial-core.md) | Accounts, categories, ledger, cash-flow dashboard | 0 | Not started |
 | 2 | Budgeting and Automation | Recurring rules, budget lines, rollover vs zero-based | 1 | Not started |
 | 3 | Debt and Savings | Snowball, avalanche, custom payoff; sinking funds; goals | 2 | Not started |
 | 4 | Tasks and Projects | One-time and recurring tasks, priority distribution | 1 | Not started |
@@ -36,6 +36,10 @@ Not planned, and listed here so they stop being raised:
 
 ## Phase documents
 
-- `_template.md` - copy this to start a phase
-- `phase-1-financial-core.md` - written
-- Phases 0 and 2 through 9 - not yet written
+| Phase | Document | Status |
+|---|---|---|
+| 0 | [phase-0-foundations.md](./phase-0-foundations.md) | Draft |
+| 1 | [phase-1-financial-core.md](./phase-1-financial-core.md) | Draft |
+| 2 to 9 | not written | - |
+
+`_template.md` is the starting point for any new phase.
