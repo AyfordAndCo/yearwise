@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Semantic design tokens as CSS custom properties.
+ *
+ * These mirror the JS tokens in packages/ui/src/tokens.ts. The two must stay in
+ * sync; Phase 1 should generate one from the other rather than hand-maintaining
+ * both. The JS tokens drive the inline styles of the @yearwise/ui primitives;
+ * these variables drive Tailwind utility classes.
+ */
+:root {
+  --background: #ffffff;
+  --surface: #f7f7f5;
+  --foreground: #1a1a1a;
+  --muted: #6b6b6b;
+  --border: #e2e2dd;
+  --primary: #1f6f5c;
+  --primary-contrast: #ffffff;
+}
+
+.dark {
+  --background: #101110;
+  --surface: #1a1b1a;
+  --foreground: #f2f2ef;
+  --muted: #9a9a94;
+  --border: #2b2c2a;
+  --primary: #3a9b83;
+  --primary-contrast: #0b0c0b;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

@@ -7,7 +7,7 @@ A life operating system: money, budgets, debts, savings, tasks, habits and meals
 
 ## Status
 
-Planning phase. No application code yet. The schema is not written. Nothing here is built.
+Phase 0 (Foundations) in progress. Shared packages (`config`, `types`, `logic`, `ui`) and the web shell (`apps/web`) are scaffolded and green. The database package, auth and deployment are next.
 
 ## Documentation
 
@@ -53,6 +53,6 @@ Not yet applicable. Phase 0 has not been built - see [`docs/02-phases/phase-0-fo
 | Architecture decisions | Accepted (A1 to A10) |
 | Data model | Approved, `schema.prisma` not yet written |
 | Tech stack | Recommended (O2, O3), pending confirmation |
-| Phase 0 | Specified, not started |
+| Phase 0 | In progress - tooling, `logic`, `ui`, `web` scaffolded |
 | Phase 1 | Fully specified, not started |
-| Application code | None |
+| Application code | Shared packages + web shell |

@@ -54,6 +54,8 @@ The user types a **positive magnitude**. Sign is not typed; it is derived from `
 | `` (empty) | rejected | |
 | `0` | rejected | A zero-amount transaction is not a fact worth recording |
 
+**Separator ambiguity.** A lone `.` or `,` is always a decimal separator, never a guessed thousands separator, because `12.345` cannot be told apart from `12,345` by its digits alone. Thousands separators are accepted only when unambiguous: a space (`1 234,56`), a repeated separator (`1,234,567.89`), or a separator paired with a distinct decimal separator (`1,234.56` / `1.234,56`). This is why `12.345` is rejected for a two-decimal currency rather than read as twelve thousand.
+
 Parsing lives in `parseMoney` in `packages/logic`. It never uses `parseFloat`.
 
 **Precision.** The number of decimal places is a property of the currency: 2 for most, 3 for `KWD`, `BHD`, `JOD`. Reject over-precision; never round silently. Rounding is a Phase 8 import concern, where it rounds half away from zero and is reported to the user.

@@ -1,0 +1,188 @@
+// Yearwise - Phase 1 data model, translated to Prisma.
+//
+// Field-level source of truth: docs/01-architecture/data-model.md (Approved
+// 2026-09-14). South African English enum values per docs/00-product/decisions.md
+// (`CURRENT`, not `CHECKING`).
+//
+// Invariants that Prisma cannot express MUST be added in the first migration
+// (or a guarded write path) - they are documented here so they are not
+// silently dropped:
+//
+//   citext     `User.email` uses @db.Citext, which needs
+//              `CREATE EXTENSION IF NOT EXISTS citext;` as the first migration.
+//   I7         kind/sign CHECK constraint:
+//                (kind = 'INCOME'  AND "amountMinor" > 0) OR
+//                (kind = 'EXPENSE' AND "amountMinor" < 0) OR
+//                kind = 'TRANSFER'
+//   I9         partial unique index (scheduler idempotency, Phase 2):
+//                CREATE UNIQUE INDEX "Transaction_recurringRuleId_periodKey_key"
+//                ON "Transaction"("recurringRuleId", "periodKey")
+//                WHERE "recurringRuleId" IS NOT NULL;
+//   I4/I5/I6   child category type equals parent type; depth <= 2; a category
+//              with a parent is never itself a parent (write path / trigger).
+//   I2         Account.currency equals Workspace.currency (write path; a
+//              cross-table CHECK is not expressible in Postgres).
+//   category   UNIQUE (workspaceId, parentId, name) needs `NULLS NOT DISTINCT`
+//              so sibling root categories cannot share a name.
+//   weekStart  weekStartDay in 0..6 (CHECK).
+//
+// Open item: feat-fin-03 (Draft) adds an `idempotencyKey` unique column scoped
+// to the workspace; data-model.md (Approved) does not list it. Resolve before
+// Phase 1 creates route ships, then add `idempotencyKey String? @db.Uuid` and
+// `@@unique([workspaceId, idempotencyKey])`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum MembershipRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum AccountType {
+  CURRENT
+  SAVINGS
+  CREDIT_CARD
+  CASH
+  LOAN
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
+
+  /// Reserved (A3): not usable until transfers land in Phase 2.
+  TRANSFER
+}
+
+enum TransactionKind {
+  INCOME
+  EXPENSE
+
+  /// Reserved (A3): not usable until transfers land in Phase 2.
+  TRANSFER
+}
+
+enum TransactionStatus {
+  POSTED
+  PENDING
+}
+
+model User {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  email       String   @unique @db.Citext
+  displayName String?
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  memberships Membership[]
+}
+
+model Workspace {
+  id                    String    @id @default(uuid(7)) @db.Uuid
+  name                  String
+  currency              String    @db.Char(3)
+  weekStartDay          Int       @default(1) @db.SmallInt
+  dateFormat            String
+  locale                String
+  onboardingCompletedAt DateTime? @db.Timestamptz(6)
+  createdAt             DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime  @updatedAt @db.Timestamptz(6)
+
+  memberships  Membership[]
+  accounts     Account[]
+  categories   Category[]
+  transactions Transaction[]
+}
+
+model Membership {
+  workspaceId String         @db.Uuid
+  userId      String         @db.Uuid
+  role        MembershipRole @default(OWNER)
+  createdAt   DateTime       @default(now()) @db.Timestamptz(6)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([workspaceId, userId])
+  @@index([userId])
+}
+
+model Account {
+  id                  String      @id @default(uuid(7)) @db.Uuid
+  workspaceId         String      @db.Uuid
+  name                String
+  type                AccountType
+  openingBalanceMinor BigInt
+  openingDate         DateTime    @db.Date
+  currency            String      @db.Char(3)
+  includeInNetWorth   Boolean     @default(true)
+  isArchived          Boolean     @default(false)
+  archivedAt          DateTime?   @db.Timestamptz(6)
+  sortOrder           Int         @default(0)
+  createdAt           DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime    @updatedAt @db.Timestamptz(6)
+
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([workspaceId, isArchived, sortOrder])
+}
+
+model Category {
+  id          String       @id @default(uuid(7)) @db.Uuid
+  workspaceId String       @db.Uuid
+  parentId    String?      @db.Uuid
+  name        String
+  type        CategoryType
+  icon        String?
+  colour      String?
+  isSystem    Boolean      @default(false)
+  isArchived  Boolean      @default(false)
+  archivedAt  DateTime?    @db.Timestamptz(6)
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
+
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parent       Category?     @relation("CategoryChildren", fields: [parentId], references: [id], onDelete: Restrict)
+  children     Category[]    @relation("CategoryChildren")
+  transactions Transaction[]
+
+  @@unique([workspaceId, parentId, name])
+  @@index([workspaceId, type, parentId, sortOrder])
+}
+
+model Transaction {
+  id              String            @id @default(uuid(7)) @db.Uuid
+  workspaceId     String            @db.Uuid
+  accountId       String            @db.Uuid
+  categoryId      String            @db.Uuid
+  amountMinor     BigInt
+  kind            TransactionKind
+  date            DateTime          @db.Date
+  payee           String?
+  notes           String?
+  recurringRuleId String?           @db.Uuid
+  periodKey       String?
+  status          TransactionStatus @default(POSTED)
+  transferGroupId String?           @db.Uuid
+  createdAt       DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime          @updatedAt @db.Timestamptz(6)
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  account   Account   @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  category  Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([workspaceId, date(sort: Desc), id(sort: Desc)])
+  @@index([workspaceId, categoryId, date])
+  @@index([workspaceId, accountId, date])
+}
