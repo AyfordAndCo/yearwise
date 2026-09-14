@@ -18,8 +18,8 @@ docs/
     decisions.md         Decision log (D-n = product, A-n = architecture).
   01-architecture/
     monorepo.md          Repo layout and package boundaries.
-    data-model.md        ERD, tables, invariants. Approve before writing schema.prisma.
-    tech-stack.md        (to write)
+    data-model.md        ERD, tables, invariants. Approved; unblocks schema.prisma.
+    tech-stack.md        Stack choices; resolves O2 auth and O3 hosting
     adr/                 Architecture decision records.
  02-phases/
     README.md            The roadmap table.

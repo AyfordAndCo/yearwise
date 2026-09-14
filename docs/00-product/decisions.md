@@ -113,8 +113,8 @@ Status values: `Proposed` | `Accepted` | `Superseded by D-x` | `Rejected`.
 | ID | Question | Blocking |
 |---|---|---|
 | O1 | Product name: Yearwize or Yearwise? | Domains, package scope, Stripe products, branding |
-| O2 | Auth provider choice | Phase 0 |
-| O3 | Hosting platform | Phase 0 |
+| O2 | Auth provider choice. **Recommendation: Supabase Auth** - see tech-stack.md | Phase 0 |
+| O3 | Hosting platform. **Recommendation: Vercel + Supabase** - see tech-stack.md | Phase 0 |
 | O4 | Are transactions with `PENDING` status in scope for Phase 2, or deferred with recurrence? | Phase 2 |
 | O5 | Is an audit trail on transaction edits and deletions required? | A4 |
 | O6 | Business model detail: what is free, what is paid | Phase 9, but affects schema (feature flags) |
