@@ -45,7 +45,7 @@ Phase 0 builds almost no product. It builds the rails. Every hour spent here is 
 - [ ] CI: a pull request runs lint, typecheck, unit tests and a build, and fails red if any fail
 - [ ] Staging deploy on merge to `main`, with the deployment URL posted back to the commit
 - [ ] `GET /health` returning build SHA and database connectivity
-- [ ] Error tracking wired into both server and client
+- [x] Error tracking wired into both server and client. Server capture verified end to end via `onRequestError`; the client DSN is asserted present in the browser bundle. **Source-map upload still needs `SENTRY_AUTH_TOKEN`**, without which production traces are minified.
 - [ ] `README.md` install and run instructions that actually work from a clean clone
 - [ ] The `main` branch ruleset is satisfied: the three required status checks exist and pass
 

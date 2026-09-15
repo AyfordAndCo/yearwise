@@ -13,6 +13,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.74.0",
     "@yearwise/database": "workspace:*",
     "@yearwise/logic": "workspace:*",
     "@yearwise/types": "workspace:*",
