@@ -9,6 +9,7 @@
     "node": ">=20"
   },
   "scripts": {
+    "postinstall": "pnpm --filter @yearwise/database run generate",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",

@@ -37,6 +37,13 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Explicit rather than relying on the root `postinstall` hook: Prisma's own
+      # hook cannot find the schema from inside the pnpm store, so it leaves a
+      # stub that throws, and `--ignore-scripts` would skip ours too. Generation
+      # does not connect to a database and needs no secrets, so this also runs on
+      # a fork's pull request.
+      - name: Generate Prisma client
+        run: pnpm --filter @yearwise/database run generate
       - run: pnpm typecheck
 
   test:
@@ -52,6 +59,8 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter @yearwise/database run generate
       - run: pnpm test
 
   build:
@@ -67,4 +76,6 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter @yearwise/database run generate
       - run: pnpm build
