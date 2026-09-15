@@ -670,17 +670,26 @@ jest-dom matchers and calls `cleanup()` after each test - globals are off, so Te
 Library's automatic cleanup does not register itself, and without it every render leaks
 into the next test.
 
-### What is covered, and why these three
+### What is covered, and why these
 
 | File | Covers |
 |---|---|
 | `tests/money-text.test.tsx` | The minus sign is U+2212; the debt flip renders a card balance as positive and "owed"; the tone mapping for in/out/zero; an explicit tone wins; the `aria-label` states direction; digits survive past 2^53. |
 | `tests/drawer.test.tsx` | Dialog semantics, `Escape`, overlay click, focus moves in, an `autoFocus`ed field is not overridden, the trap wraps in both directions, focus returns to the opener, body scroll is locked and released. |
 | `tests/table.test.tsx` | Header and row counts, right-alignment, one group header per group (not per row), group header spans every column, skeleton rows while loading, the empty slot only when not loading, click and Enter/Space activation, rows focusable only when activatable. |
+| `tests/toast.test.tsx` | `role="status"` versus `role="alert"`, sticky at `duration: 0`, auto-dismiss exactly at the deadline, **pause on hover and on focus**, dismissal, and an action that runs without dismissing. |
+| `tests/menu.test.tsx` | `aria-expanded`, opens on click and on `ArrowDown`, first enabled item focused, arrow wrapping that skips disabled items, Home/End, `Escape` restores focus to the trigger, outside click, `Tab` closes, disabled items neither fire nor close. |
+| `tests/confirm-dialog.test.tsx` | `role="alertdialog"`, **Cancel focused first** for a destructive action, confirm/cancel callbacks, `Escape`, backdrop click, custom labels, extra detail slot. |
+| `tests/form-field.test.tsx` | Label association, hint and error both in `aria-describedby`, `aria-invalid`, `role="alert"`, `aria-required`, the decorative asterisk, and no invalid state without an error. |
+| `tests/multi-select.test.tsx` | Placeholder and summary text, `+N more` collapsing, checkbox state, add/remove, select-all that skips disabled options, clear, `Escape`, outside click, indentation. |
+| `tests/segmented-control.test.tsx` | `radiogroup` semantics, single tab stop, arrow wrapping, Home/End, skipping disabled options, and that a disabled option cannot be selected by click. |
+| `tests/tooltip.test.tsx` | Hidden until needed, shown on focus and on hover, hidden on blur and on leave, `aria-describedby` cloned onto the trigger, `Escape` hides. |
+| `tests/pickers.test.tsx` | `AccountMultiSelect` offers archived accounts and reports ids; `CategoryMultiSelect` orders parents before children, indents children, and reports only what the user picked. |
 
-These are the three highest-risk behaviours in the package: money rendered wrong is the
-product's worst defect, a broken focus trap locks a keyboard user inside a drawer, and a
-table that groups per row instead of per group quietly misreads the ledger.
+These are the behaviours where a defect is either dangerous or invisible: money rendered
+wrong, a focus trap that locks a keyboard user inside a dialog, a table that groups per
+row instead of per group, an undo toast whose deadline passes before it can be clicked,
+and a category filter that silently drops children.
 
 ### Writing a test
 
@@ -709,7 +718,7 @@ its own focusable set, which need not agree with ours, so it can mask a regressi
 | # | Limitation | Consequence |
 |---|---|---|
 | L1 | Styling is inline, so `:hover` and `:focus-visible` are driven by React state. | Hover and focus are applied via `onMouseEnter`/`onFocus` rather than CSS, so a focus ring appears on pointer focus too. A CSS layer with `data-*` hooks is the fix if that matters. |
-| L2 | Test coverage is three components deep. | `MoneyText`, `Drawer` and `Table` are covered. `Toast` timing, `Menu` keyboard navigation, `ConfirmDialog`, `FormField` wiring and the multi-selects are not. |
+| L2 | `apps/web` has no test harness of its own. | Every interactive primitive is covered here (107 tests), and the domain rules are covered in `packages/logic`. The screens themselves - the accounts flow, the drawer's parsing - are verified by typecheck and a production build only. | Add a jsdom harness to `apps/web` when a second screen lands, and test the flows rather than the pixels. |
 | L3 | Form primitives are partial. | `Select`, `FormField` and `DateField` exist. `Combobox`, `Checkbox`, `Radio`, `Switch`, `Textarea` and `DateRangeField` are planned (design-system section 11) and not built. `SegmentedControl` and `Badge` are built. |
 | L4 | Tokens are duplicated between `tokens.ts` and `globals.css`. | The two can drift. Generate one from the other in Phase 1. |
 | L5 | No chart implementations. | `ChartFrame` frames a chart; `DonutChart` and `BarChart` do not exist yet, pending the charting-library decision. |
