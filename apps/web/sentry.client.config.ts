@@ -4,22 +4,24 @@ import { sentryOptions } from './sentry.shared';
 /**
  * Browser initialisation.
  *
- * **Why this file name.** On SDK v10 the preferred name is
- * `instrumentation-client.ts`, but that convention requires **Next 15.3+**, and
- * this app is on 15.1.6. Next 15.1.6 does not recognise the file at all - it is
- * ignored silently, which is the worst possible failure for error tracking: the
- * configuration looks present and nothing is ever reported.
+ * **Known gap as of Next 15.5.25.** The browser SDK is bundled and the client
+ * source maps upload, but `process.env.NEXT_PUBLIC_SENTRY_DSN` is replaced with an
+ * EMPTY value, so the SDK initialises with no DSN and reports nothing. Verified by
+ * grepping the emitted client chunks for the DSN host: it appears only under
+ * `.next/server`, never under `.next/static`.
  *
- * `sentry.client.config.ts` is the name the Sentry webpack plugin injects on
- * this version. It is marked deprecated, and the rename should happen with the
- * Next upgrade, not before.
+ * On Next 15.1.6 this same file DID inline the DSN. Setting the variable for real
+ * in the environment, rather than deriving it in `next.config.ts`, does not change
+ * the outcome - so this is a bundling change, not a configuration one.
  *
- * Once `SENTRY_AUTH_TOKEN` is set the plugin stops being silenced, so the
- * deprecation warning prints on **every** build. That is deliberate: the warning
- * is the reminder to do the rename, and suppressing it would hide the trigger.
+ * Unaffected and verified working: server-side capture via `onRequestError`, and
+ * source-map upload for the Node, Edge and Client runtimes.
  *
- * Verified by asserting the DSN reaches the client bundle - a build succeeding
- * proves nothing here, which is exactly how the first attempt shipped a browser
- * SDK with an empty DSN.
+ * The likely fix is to stop depending on build-time inlining entirely and
+ * initialise on the client from a Server Component prop, which reads
+ * `process.env.SENTRY_DSN` at runtime and serialises it into the flight payload.
+ *
+ * The plugin prints a deprecation warning on every build. That is deliberate: it
+ * marks this file as unfinished work, and it stops working under Turbopack.
  */
 Sentry.init(sentryOptions(process.env.NEXT_PUBLIC_SENTRY_DSN));
