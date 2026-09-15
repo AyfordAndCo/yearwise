@@ -32,12 +32,12 @@ export function Button({ variant = 'primary', children, type = 'button', ...rest
     },
     secondary: {
       background: 'transparent',
-      color: colours.text,
+      color: colours.foreground,
       borderColor: colours.border,
     },
     ghost: {
       background: 'transparent',
-      color: colours.text,
+      color: colours.foreground,
       borderColor: 'transparent',
     },
   };

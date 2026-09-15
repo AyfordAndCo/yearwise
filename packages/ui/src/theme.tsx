@@ -3,11 +3,12 @@
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import { tokens } from './tokens';
-import type { Theme, ThemeColours } from './tokens';
+import type { Theme, ThemeColours, ThemeElevation } from './tokens';
 
 export interface ThemeContextValue {
   theme: Theme;
   colours: ThemeColours;
+  elevation: ThemeElevation;
   setTheme: (theme: Theme) => void;
 }
 
@@ -24,6 +25,7 @@ export function ThemeProvider({
   const value: ThemeContextValue = {
     theme,
     colours: tokens.colour[theme],
+    elevation: tokens.elevation[theme],
     setTheme,
   };
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

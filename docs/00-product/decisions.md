@@ -53,6 +53,13 @@ Status values: `Proposed` | `Accepted` | `Superseded by D-x` | `Rejected`.
 **Decision:** Export of all user data in an open format is a shipped feature, not a nice-to-have. Importer for the original spreadsheet is an acquisition channel, not an afterthought.
 **Rationale:** It replaces the one-time-purchase value proposition (the user "owns" the file) with a comparable one, and it is the single most credible answer to "why should I put my financial data in your database".
 
+### D7 - Brand and visual direction: light and green
+**Status:** Accepted
+**Decision:** The visual system is **light-first with a single green accent**. Dark ships as a full token swap, but light is the brand and the default. `packages/ui/src/tokens.ts` is the source of truth for every value; `docs/04-design/design-system.md` documents it.
+**Rationale:** A ledger is read in daylight, at a desk, for longer than most screens, so a light surface keeps dense figures legible. One accent, used sparingly, is what separates the product from a generic dashboard, and deep green reads as money without being a novelty colour. Green means *interactive or brand* and never *money*; money keeps its own two tokens and always travels with a sign, so direction survives without colour perception.
+**Supersedes:** The Phase 1 deliverable previously read "design tokens for the dark and gold brand". That phrase was written before any token existed. When the tokens were built they were light-first green, and the two were never reconciled. The owner confirmed light-and-green as the brand, so the plan was corrected to match the code rather than the code rewritten to match the plan.
+**Consequence:** `docs/02-phases/phase-1-financial-core.md`, `docs/04-design/design-system.md` and `docs/04-design/page-and-component-plan.md` were updated. Dark remains a supported theme, so phase 0's "dark theme" deliverable still holds.
+
 ---
 
 ## Architecture decisions

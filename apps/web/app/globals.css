@@ -5,32 +5,96 @@
 /*
  * Semantic design tokens as CSS custom properties.
  *
- * These mirror the JS tokens in packages/ui/src/tokens.ts. The two must stay in
- * sync; Phase 1 should generate one from the other rather than hand-maintaining
- * both. The JS tokens drive the inline styles of the @yearwise/ui primitives;
- * these variables drive Tailwind utility classes.
+ * These mirror the JS tokens in packages/ui/src/tokens.ts. This file is the
+ * Tailwind-facing representation; that file is the JS-facing one. Keep them in
+ * step - Phase 1 should generate one from the other rather than hand-maintaining
+ * both. See docs/04-design/design-system.md section 12.
+ *
+ * Green means "interactive", never "money". Money carries a sign as well as a
+ * colour, so direction survives without colour perception.
  */
 :root {
+  /* Surfaces */
   --background: #ffffff;
   --surface: #f7f7f5;
+  --raised: #ffffff;
+  --overlay: rgba(26, 26, 26, 0.45);
+
+  /* Text */
   --foreground: #1a1a1a;
   --muted: #6b6b6b;
+  --disabled: #a3a3a0;
+
+  /* Lines */
   --border: #e2e2dd;
+  --border-strong: #cbc8bd;
+
+  /* Brand and interaction */
   --primary: #1f6f5c;
+  --primary-hover: #185a4a;
+  --primary-active: #114438;
   --primary-contrast: #ffffff;
+  --focus: #1f6f5c;
+  --tint: rgba(31, 111, 92, 0.1);
+
+  /* Money semantics */
+  --money-in: #1e8449;
+  --money-in-dim: rgba(30, 132, 73, 0.1);
+  --money-out: #c0392b;
+  --money-out-dim: rgba(192, 57, 43, 0.1);
+
+  /* Status */
+  --info: #1d6fb8;
+  --success: #1e8449;
+  --warning: #9a6212;
+  --danger: #b03a2e;
 }
 
 .dark {
   --background: #101110;
   --surface: #1a1b1a;
+  --raised: #232522;
+  --overlay: rgba(0, 0, 0, 0.6);
+
   --foreground: #f2f2ef;
   --muted: #9a9a94;
+  --disabled: #5e605c;
+
   --border: #2b2c2a;
+  --border-strong: #3d3f3d;
+
   --primary: #3a9b83;
+  --primary-hover: #4bb394;
+  --primary-active: #2d7d69;
   --primary-contrast: #0b0c0b;
+  --focus: #3a9b83;
+  --tint: rgba(58, 155, 131, 0.16);
+
+  --money-in: #4ade80;
+  --money-in-dim: rgba(74, 222, 128, 0.14);
+  --money-out: #f87171;
+  --money-out-dim: rgba(248, 113, 113, 0.14);
+
+  --info: #6fa8dc;
+  --success: #4ade80;
+  --warning: #d9a441;
+  --danger: #e0735c;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Reduce motion is honoured in CSS as well as in the primitives, so a
+   third-party chart cannot animate past the user's preference. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

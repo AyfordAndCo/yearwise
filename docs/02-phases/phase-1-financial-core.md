@@ -42,7 +42,7 @@ If it is not in the in-scope table above, it is not in this phase.
 - [ ] Schema and migrations for the Phase 1 tables in `docs/01-architecture/data-model.md`
 - [ ] RLS policies on every table, with a test proving user A cannot read user B's rows
 - [ ] `packages/logic`: `money.ts` (`parseMoney`, `formatMoney`, `sumMinor`), `date.ts` (calendar-date helpers), `categoryTree.ts`
-- [ ] `packages/ui`: design tokens for the dark and gold brand, plus `Button`, `Input`, `Select`, `Drawer`, `DataTable`, `EmptyState`, `Toast`
+- [x] `packages/ui`: design tokens for the light and green brand (D7), plus `Button`, `Input`, `MoneyText`, `Drawer`, `Table`, `ChartFrame`. `Select`, `EmptyState` and `Toast` still to build.
 - [ ] Six screens: Dashboard, Transactions, Accounts, Categories, Settings, Setup wizard
 - [ ] Seed script: default categories, plus a demo workspace for development
 - [ ] `docs/03-features/feat-fin-03-transaction-ledger.md` written and approved **before** its implementation begins

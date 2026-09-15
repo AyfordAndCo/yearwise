@@ -30,7 +30,8 @@ docs/
     _template.md         Copy this to start a feature.
     feat-*.md
  04-design/
-    design-system.md     (to write)
+    design-system.md           Tokens, type, motion, accessibility, anti-patterns.
+    page-and-component-plan.md Every screen: components, rationale, display, flow.
 ```
 
 ## Conventions

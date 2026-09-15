@@ -10,7 +10,7 @@ export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   const style: CSSProperties = {
     fontFamily: 'inherit',
     fontSize: tokens.typeScale.base,
-    color: colours.text,
+    color: colours.foreground,
     background: colours.surface,
     border: `1px solid ${colours.border}`,
     borderRadius: tokens.radius.md,
