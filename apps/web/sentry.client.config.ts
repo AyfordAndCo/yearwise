@@ -14,7 +14,12 @@ import { sentryOptions } from './sentry.shared';
  * this version. It is marked deprecated, and the rename should happen with the
  * Next upgrade, not before.
  *
+ * Once `SENTRY_AUTH_TOKEN` is set the plugin stops being silenced, so the
+ * deprecation warning prints on **every** build. That is deliberate: the warning
+ * is the reminder to do the rename, and suppressing it would hide the trigger.
+ *
  * Verified by asserting the DSN reaches the client bundle - a build succeeding
- * proves nothing here.
+ * proves nothing here, which is exactly how the first attempt shipped a browser
+ * SDK with an empty DSN.
  */
 Sentry.init(sentryOptions(process.env.NEXT_PUBLIC_SENTRY_DSN));
