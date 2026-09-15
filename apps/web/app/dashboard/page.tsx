@@ -1,4 +1,5 @@
 import { Card, MoneyText } from '@yearwise/ui';
+import { PrimitivesSmoke } from './primitives-smoke';
 
 export default function DashboardPage() {
   return (
@@ -35,6 +36,8 @@ export default function DashboardPage() {
             </dd>
           </div>
         </dl>
+
+        <PrimitivesSmoke />
       </Card>
     </main>
   );

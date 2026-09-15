@@ -275,13 +275,173 @@ decision does not block it. Supply `aria-hidden="true"` on the chart itself when
 
 **A chart must always supply `dataTable`.** An accessible mirror is not optional.
 
-### 4.5 `Button`, `Input`, `Card`
+### 4.5 `Select`
+
+A single-choice control over a known, short option list.
+
+```tsx
+<Select
+  value={accountType}
+  onChange={(event) => setAccountType(event.target.value)}
+  placeholder="Choose a type"
+  options={[
+    { value: 'CURRENT', label: 'Cheque account' },
+    { value: 'SAVINGS', label: 'Savings' },
+    { value: 'CREDIT_CARD', label: 'Credit card' },
+  ]}
+/>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `options` | `{ value, label, disabled? }[]` | required |
+| `placeholder` | `string` | — |
+
+Deliberately a **native `select`**: it is keyboard- and screen-reader-correct for free
+and works on touch without custom code. The chevron is a themed data-URI SVG, so the
+control needs no icon dependency. Searchable and multi-select pickers are a different
+problem and a different component (`Combobox`, `AccountMultiSelect`,
+`CategoryMultiSelect`) - still to build.
+
+### 4.6 `DateField`
+
+A naive calendar date, as `YYYY-MM-DD`.
+
+```tsx
+<DateField value={date} onValueChange={setDate} min="2026-03-01" />
+```
+
+| Prop | Type | Notes |
+|---|---|---|
+| `value` | `string` | `YYYY-MM-DD` |
+| `onValueChange` | `(value: string) => void` | |
+
+**Never a `Date`, never a timestamp, never an epoch number.** Transaction dates have no
+timezone (A6), and `new Date()` at this boundary is exactly the bug that decision exists
+to prevent. A native date input already speaks and returns `YYYY-MM-DD`, so nothing is
+parsed and nothing is converted.
+
+### 4.7 `FormField`
+
+Label, control, hint and error in one component.
+
+```tsx
+<FormField label="Payee" hint="Who was paid" error={errors.payee} required>
+  {(field) => <Input {...field} value={payee} onChange={(e) => setPayee(e.target.value)} />}
+</FormField>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `label` | `string` | required |
+| `children` | `(control: FormFieldControlProps) => ReactNode` | required |
+| `hint` | `string` | — |
+| `error` | `string` | — |
+| `required` | `boolean` | `false` |
+
+`children` is a **render prop**, not an element. It receives `{ id, 'aria-describedby',
+'aria-invalid', 'aria-required' }` and you spread them onto the control. That is the only
+way to guarantee the label, hint and error are linked on whatever control is used -
+hand-wiring `aria-describedby` per screen is precisely the failure this component exists
+to prevent.
+
+It owns the accessibility contract: a visible label at all times (never
+placeholder-as-label), `aria-describedby` linking both hint and error, `aria-invalid` on
+failure, and `role="alert"` so a validation message is announced when it appears.
+
+Works with `Input`, `Select` and `DateField`, all of which accept and spread `...rest`.
+
+### 4.8 `EmptyState`
+
+```tsx
+{/* First run: there is nothing here yet, and the fix is an action. */}
+<EmptyState
+  variant="no-data"
+  title="No transactions yet"
+  description="Record your first one to see it here."
+  action={<Button>Record a transaction</Button>}
+/>
+
+{/* Filtered to nothing: there is data, the filter excluded it. */}
+<EmptyState
+  variant="no-matches"
+  title="No transactions match"
+  description="Try widening the date range."
+  action={<Button variant="secondary">Clear filters</Button>}
+/>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `title` | `string` | required |
+| `description` | `string` | — |
+| `action` | `ReactNode` | — |
+| `icon` | `ReactNode` | — |
+| `variant` | `'no-data' \| 'no-matches'` | `'no-data'` |
+
+FEAT-FIN-03 requires these to be **different states that look different**. They are
+separate variants rather than one padded box with different copy: `no-data` is a tinted,
+bordered prompt; `no-matches` is an unstyled, dashed container. The two need different
+actions and different emphasis.
+
+### 4.9 `Toast` and `ToastRegion`
+
+```tsx
+<ToastRegion>
+  {toasts.map((toast) => (
+    <Toast
+      key={toast.id}
+      open
+      onDismiss={() => dismiss(toast.id)}
+      title="Transaction deleted"
+      description="This cannot be undone after the timer."
+      action={{ label: 'Undo', onClick: () => undo(toast.id) }}
+      duration={10_000}
+    />
+  ))}
+</ToastRegion>
+```
+
+| `Toast` prop | Type | Default |
+|---|---|---|
+| `open` | `boolean` | required |
+| `onDismiss` | `() => void` | required |
+| `title` | `string` | required |
+| `description` | `string` | — |
+| `tone` | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'` |
+| `action` | `{ label, onClick }` | — |
+| `duration` | `number` (ms; `0` = sticky) | `0` |
+
+The toast owns its own timer and pause behaviour: the countdown **pauses while the
+pointer or focus is inside it**, so an undo affordance can always be reached before the
+deadline. Pausing restarts the full duration on resume, which is deliberately lenient.
+`danger` renders `role="alert"`; everything else is `role="status"`.
+
+The toast does **not** own a queue - which toasts exist is application state, and this
+package holds none. `ToastRegion` is the fixed bottom-right region, kept separate because
+a live region must exist in the DOM before its content changes for screen readers to
+announce the change.
+
+### 4.10 `Button`, `Input`, `Card`
 
 | Component | Props |
 |---|---|
 | `Button` | `variant?: 'primary' \| 'secondary' \| 'ghost'` (default `primary`), plus `ButtonHTMLAttributes`. `type` defaults to `button`. |
-| `Input` | `InputHTMLAttributes`. Full width, token-styled. |
+| `Input` | `InputHTMLAttributes`. Full width, token-styled, focus-ringed. |
 | `Card` | `HTMLAttributes<HTMLDivElement>`. `style` is merged, so callers can extend it. |
+
+### 4.11 Shared control internals
+
+Exported so application-level controls (a future `Textarea`, a date-range field) cannot
+diverge from the built-in ones:
+
+| Export | Purpose |
+|---|---|
+| `controlStyle(colours)` | The shared visual base for text-entry controls |
+| `useControlFocus(colours)` | Focus state + ring style, and the `onFocus`/`onBlur` handlers |
+
+`Input`, `Select` and `DateField` are all built on these. A divergent control is the most
+visible kind of design-system failure, so the base lives in one place.
 
 ---
 
@@ -321,7 +481,7 @@ decision does not block it. Supply `aria-hidden="true"` on the chart itself when
 |---|---|---|
 | L1 | Styling is inline, so `:hover` and `:focus-visible` are driven by React state. | Hover and focus are applied via `onMouseEnter`/`onFocus` rather than CSS, so a focus ring appears on pointer focus too. A CSS layer with `data-*` hooks is the fix if that matters. |
 | L2 | No test suite yet. | Behaviour (focus trap, money formatting) is asserted only by typecheck and lint. `vitest` + Testing Library is the next step. |
-| L3 | No form primitives. | `Select`, `Combobox`, `Checkbox`, `FormField` and `DateField` are planned (design-system section 11) and not built. |
+| L3 | Form primitives are partial. | `Select`, `FormField` and `DateField` exist. `Combobox`, `Checkbox`, `Radio`, `Switch`, `SegmentedControl`, `Textarea` and `DateRangeField` are planned (design-system section 11) and not built. |
 | L4 | Tokens are duplicated between `tokens.ts` and `globals.css`. | The two can drift. Generate one from the other in Phase 1. |
 | L5 | No chart implementations. | `ChartFrame` frames a chart; `DonutChart` and `BarChart` do not exist yet, pending the charting-library decision. |
 | L6 | Contrast ratios are intended, not measured. | Add a token contrast test that fails the build (design-system G6). |

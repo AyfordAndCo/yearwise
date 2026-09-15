@@ -1,22 +1,25 @@
 'use client';
 
-import type { CSSProperties, InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes } from 'react';
+import { controlStyle, useControlFocus } from './control';
 import { useTheme } from './theme';
-import { tokens } from './tokens';
 
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
+export function Input({ style, onFocus, onBlur, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   const { colours } = useTheme();
+  const focus = useControlFocus(colours);
 
-  const style: CSSProperties = {
-    fontFamily: 'inherit',
-    fontSize: tokens.typeScale.base,
-    color: colours.foreground,
-    background: colours.surface,
-    border: `1px solid ${colours.border}`,
-    borderRadius: tokens.radius.md,
-    padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
-    width: '100%',
-  };
-
-  return <input style={style} {...props} />;
+  return (
+    <input
+      {...rest}
+      onFocus={(event) => {
+        focus.onFocus();
+        onFocus?.(event);
+      }}
+      onBlur={(event) => {
+        focus.onBlur();
+        onBlur?.(event);
+      }}
+      style={{ ...controlStyle(colours), ...focus.focusStyle, ...style }}
+    />
+  );
 }

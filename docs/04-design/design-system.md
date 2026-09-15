@@ -339,18 +339,19 @@ Three layers, matching the decision rule *low-level visual → `ui`; page/app st
 
 ### 11.1 `packages/ui` — primitives
 
-**Built:** `ThemeProvider` · `useTheme` · `usePrefersReducedMotion` · `Button` ·
-`Input` · `Card` · `MoneyText` · `Drawer` · `Table` · `ChartFrame`
+**Built:** `ThemeProvider` · `useTheme` · `usePrefersReducedMotion` · `controlStyle` ·
+`useControlFocus` · `Button` · `Input` · `Select` · `DateField` · `FormField` · `Card` ·
+`MoneyText` · `Drawer` · `Table` · `ChartFrame` · `EmptyState` · `Toast` · `ToastRegion`
 
-**Planned:** `IconButton` · `Textarea` · `Select` · `Combobox` · `Checkbox` · `Radio` ·
-`Switch` · `SegmentedControl` · `FormField` · `Label` · `HelpText` · `ErrorText` ·
-`DateField` · `DateRangeField` · `Badge` · `Chip` · `Divider` · `Tooltip` · `Popover` ·
-`Menu` · `Dialog` · `Toast` · `Skeleton` · `Spinner` · `Progress` · `Avatar` · `Tabs` ·
-`Pagination` · `EmptyState` · `Callout` · `PercentText` · `DonutChart` · `BarChart`
+**Planned:** `IconButton` · `Textarea` · `Combobox` · `Checkbox` · `Radio` · `Switch` ·
+`SegmentedControl` · `Label` · `HelpText` · `ErrorText` · `DateRangeField` · `Badge` ·
+`Chip` · `Divider` · `Tooltip` · `Popover` · `Menu` · `Dialog` · `Skeleton` · `Spinner` ·
+`Progress` · `Avatar` · `Tabs` · `Pagination` · `Callout` · `PercentText` · `DonutChart` ·
+`BarChart`
 
-Phase 1's stated deliverable is `Button`, `Input`, `Select`, `Drawer`, `DataTable`,
-`EmptyState`, `Toast`. `DataTable` is `Table` plus the ledger's pagination and grouping;
-grouping is built, pagination is the caller's cursor. See
+Phase 1's stated deliverable was `Button`, `Input`, `Select`, `Drawer`, `DataTable`,
+`EmptyState`, `Toast` - all now exist. `DataTable` is `Table` plus the ledger's
+pagination and grouping; grouping is built, pagination is the caller's cursor. See
 [`packages/ui/README.md`](../../packages/ui/README.md) for props and usage.
 
 ### 11.2 `apps/web` — `common/` (reusable, application-aware)
@@ -370,7 +371,7 @@ grouping is built, pagination is the caller's cursor. See
 | # | Gap | Effect | Action |
 |---|---|---|---|
 | G2 | Tokens are hand-duplicated between `packages/ui/src/tokens.ts` and `apps/web/app/globals.css`. | Two sources of truth drift silently. | Phase 1: generate the CSS variables from the JS tokens (or vice versa) in the build. |
-| G3 | Only ten primitives exist; `Select`, `Toast`, `EmptyState`, `FormField` and the date fields do not. | Phase 1 screens cannot be built without them. | Build in dependency order as screens need them, not speculatively. |
+| G3 | Phase 1's stated primitive set is complete. `Combobox`, `Checkbox`, `Radio`, `SegmentedControl`, `Badge`, `Tooltip`, `Menu` and `Dialog` are not built. | Several components in section 11.2 depend on them. | Build in dependency order as screens need them, not speculatively. |
 | G4 | `ChartFrame` frames a chart, but `DonutChart` and `BarChart` do not exist. | The dashboard cannot be built yet. | Choose the charting library (section 14), then build the two charts against `ChartFrame`. |
 | G5 | No component test suite. | Focus trap and money formatting are asserted by typecheck and lint only. | Add `vitest` + Testing Library; start with `MoneyText`, `Drawer` focus trap and `Table` grouping. |
 | G6 | Contrast ratios are target values, not measured. | A pairing could fail AA unnoticed. | Add a token contrast test that fails the build. |
