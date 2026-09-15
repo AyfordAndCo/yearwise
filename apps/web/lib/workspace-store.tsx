@@ -22,7 +22,6 @@ export interface Account {
 export interface AccountView extends Account {
   /** Derived from the ledger, never stored (I3). */
   balanceMinor: bigint;
-  transactionAmounts: readonly bigint[];
 }
 
 export interface Category {
@@ -264,7 +263,6 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       const amounts = amountsByAccount.get(account.id) ?? [];
       return {
         ...account,
-        transactionAmounts: amounts,
         balanceMinor: currentBalanceMinor(account.openingBalanceMinor, amounts),
       };
     });

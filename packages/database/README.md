@@ -43,9 +43,23 @@ pnpm --filter @yearwise/database exec prisma migrate deploy
 ```
 
 `20260914000000_init` was generated offline with
-`prisma migrate diff --from-empty --to-schema-datamodel` and then hand-extended.
-It has **not been applied to a live database yet** - the local environment has no
-running Postgres (see section 4).
+`prisma migrate diff --from-empty --to-schema-datamodel`, hand-extended, and
+**applied to the Supabase project on 2026-09-14**. Verified against the live
+database afterwards:
+
+- `User.email` is `citext`
+- `Transaction_kind_sign_check` **rejects** `kind = 'EXPENSE'` with a positive amount
+- `Category_workspaceId_parentId_name_key` carries `NULLS NOT DISTINCT`
+- `Transaction_recurringRuleId_periodKey_key` is partial
+
+**Lesson learned the hard way:** the first attempt failed with
+`index "Category_workspaceId_parentId_name_key" does not exist`, because the
+hand-written `DROP INDEX` was placed where the index was created rather than
+after it. Recovery was scoped to dropping only what that migration had created
+(`DROP TABLE ... CASCADE` per table plus the enums, then clearing the
+`_prisma_migrations` row) - deliberately not `DROP SCHEMA public CASCADE`, which
+would have taken Supabase's default grants for `anon` and `authenticated` with
+it.
 
 ### 2.1 What is hand-written, and why
 
@@ -71,23 +85,38 @@ by dropping the constraints.
 | # | Gap | Note |
 |---|---|---|
 | D1 | **No RLS policies.** | A9 requires authorisation enforced in the database, not only in application code, with a cross-tenant test in CI. The tables carry `workspaceId`; the policies do not exist yet. |
-| D2 | **The migration has never been applied.** | Needs a live Postgres. |
+| D2 | ~~The migration has never been applied.~~ **Applied.** | Verified against Supabase. |
 | D3 | **No seed script.** | Default categories plus a demo workspace (Phase 1 deliverable). |
 | D4 | **`idempotencyKey` is unresolved.** | `feat-fin-03` adds it; `data-model.md` does not list it. Logged in the schema header. |
 | D5 | **`@yearwise/types` is still empty.** | Zod contracts for the API arrive with the first route handler. |
 
 ---
 
-## 4. Why this is not wired into the app yet
+## 4. What is wired, and what is not
 
-`apps/web` reads an in-memory store (`apps/web/lib/workspace-store.tsx`, marked
-TEMPORARY). Swapping it for this package requires a running database, and the
-development machine has none:
+`apps/web` reads and writes **accounts** through this package:
 
-- Docker Desktop's engine will not start, because **WSL2 is not installed**, which
-  its Linux engine requires.
-- No native Postgres is installed, and nothing listens on 5432.
+| Layer | File |
+|---|---|
+| Server page | `app/(app)/accounts/page.tsx` - a server component calling `listAccounts()` |
+| Route handlers | `app/api/accounts/route.ts` (GET, POST), `app/api/accounts/[id]/route.ts` (PATCH) |
+| Repository | `lib/server/accounts.ts` |
+| Boundary | `lib/account-mapper.ts` - money as strings across the wire, `bigint` inside |
+| Contracts | `@yearwise/types` - the Zod schema both sides validate against |
 
-So the schema, the migration and the client are ready, and the application layer
-is deliberately still on the in-memory store rather than on Prisma code that
-could not be executed even once.
+Verified end to end against Supabase: create then read back, archive and
+unarchive, a rejected JSON number for money, an unknown id returning 404, and the
+I7 `CHECK` refusing a bad row.
+
+**Accounts persist. Transactions do not yet.** The ledger still reads
+`apps/web/lib/workspace-store.tsx`, which is in-memory demo data - so its account
+list and balances are *not* the database's, and creating a transaction there does
+not survive a reload. That store is deleted when the ledger is wired, which is
+the next step. Until then, treat `/accounts` as the authoritative screen.
+
+### Why the demo workspace exists
+
+There is no auth yet (FEAT-ACC-01), so `lib/server/workspace.ts` resolves a single
+demo workspace, creating it on first use. Every table carries `workspaceId`
+regardless (M1/A9), so replacing that one function with a membership lookup is
+the whole change - not a migration.

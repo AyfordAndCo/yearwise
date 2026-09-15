@@ -39,8 +39,8 @@ If it is not in the in-scope table above, it is not in this phase.
 ## Deliverables
 
 - [ ] Staging deployment, updated on merge to `main`
-- [ ] Schema and migrations for the Phase 1 tables in `docs/01-architecture/data-model.md`
-- [ ] RLS policies on every table, with a test proving user A cannot read user B's rows
+- [x] Schema and migrations for the Phase 1 tables in `docs/01-architecture/data-model.md` - applied to Supabase, with I7, I9 and `citext` added by hand
+- [ ] RLS policies on every table, with a test proving user A cannot read user B's rows. **Not written.** Every table carries `workspaceId`, and the API is single-tenant by construction until auth lands.
 - [x] `packages/logic`: `money.ts` (`parseMoney`, `formatMoney`, `sumMinor`), `date.ts` (calendar-date helpers), `category-tree.ts` (`buildCategoryRows`, `resolveCategoryIds`, `childIds`)
 - [x] `packages/ui`: design tokens for the light and green brand (D7), plus `Button`, `Input`, `MoneyText`, `Drawer`, `Table`, `ChartFrame`. `Select`, `EmptyState` and `Toast` still to build.
 - [ ] Six screens: Dashboard, Transactions, Accounts, Categories, Settings, Setup wizard. **Routes exist for five; Accounts is built, the rest are placeholders. Setup wizard awaits auth.**

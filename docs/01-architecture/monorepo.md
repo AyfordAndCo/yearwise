@@ -49,7 +49,7 @@ These are rules, not suggestions.
 | `packages/logic` | `types` only | React, Next.js, Prisma, `database`, `ui` | Must be pure and testable. This is where money maths lives. |
 | `packages/database` | `types` | `ui`, `logic`, React | Schema and client only |
 | `packages/ui` | `logic`, `types` | `database`, Prisma | Presentational. Never fetches data. `logic` is permitted because it is pure, framework-free and I/O-free - `MoneyText` owns money formatting so no screen re-implements it. |
-| `packages/types` | nothing | everything | Zero-dependency leaf |
+| `packages/types` | nothing (no workspace package) | everything | Zero-workspace-dependency leaf. It depends on `zod`, because `tech-stack.md` places the API contracts here and a Zod schema is a runtime value. |
 
 **`packages/logic` being pure is the load-bearing constraint.** Debt payoff, budget rollover, money parsing, narrowing of recurrence dates and streak calculation all live there, and they must be testable without a database, a browser, or a network.
 

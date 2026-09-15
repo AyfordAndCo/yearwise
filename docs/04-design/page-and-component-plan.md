@@ -583,8 +583,10 @@ Every screen must satisfy this table. A screen missing a cell is not done.
 | G6 | `packages/logic` has money and date helpers; no `categoryTree.ts`. | `categoryTree.ts` (Phase 1 deliverable) for rollup and descendant resolution. | Needed by `CategoryPicker`, category filter and the donut rollup. |
 | G7 | Focus ring token now exists (`colours.focus`, used by `Table` rows and `Drawer`). | Contrast test and a `FormField` that centralises focus and error wiring. | design-system G6. |
 | G8 | Tokens are duplicated between `tokens.ts` and `globals.css`. | Generated from one source. | design-system G2. |
-| G9 | `/accounts` reads an **in-memory store** (`apps/web/lib/accounts-store.tsx`) seeded with demo data. | Balances are derived correctly and create/edit/archive work, but nothing persists, and there is no session. | Swap for Postgres reads and writes when FEAT-ACC-01 and the database land. The screens consume `AccountView`, which does not change. |
-| G10 | `/dashboard`, `/transactions`, `/categories` and `/settings` are placeholder screens. | The navigation is honest rather than 404-ing, but only Accounts does anything. | Phase 1 build order, steps 3 onwards. |
+| G9 | **Accounts are on the database.** `/accounts` reads and writes Postgres through `app/api/accounts`; the balance is derived by one grouped aggregate, and I7 is enforced by a `CHECK` in the database. | **The ledger is not.** `/transactions` still reads in-memory demo data, so its account list and balances are not the database's, and a recorded transaction does not survive a reload. | Wire transactions next, then delete `apps/web/lib/workspace-store.tsx` and its seed. Until then `/accounts` is the authoritative screen. |
+| G10 | `/dashboard`, `/categories` and `/settings` are placeholder screens. `/transactions` is built but on demo data. | The navigation is honest rather than 404-ing. | Phase 1 build order, steps 3 onwards. |
+| G11 | No RLS policies, and no cross-tenant test. | A9 requires authorisation enforced in the database, not only in application code. Every table carries `workspaceId`; the policies do not exist, so the API is single-tenant by construction today. | Required before any second user exists. |
+| G12 | `apps/web`'s API layer has no integration test. | The database wiring was verified by hand against Supabase, not by a test that runs in CI. | Add a Postgres service to the CI workflow and exercise the repository against it. |
 
 ---
 

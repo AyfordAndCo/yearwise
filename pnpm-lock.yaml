@@ -20,9 +20,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@yearwise/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@yearwise/logic':
         specifier: workspace:*
         version: link:../../packages/logic
+      '@yearwise/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@yearwise/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -35,6 +41,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.3.0(react@19.3.0)
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
     devDependencies:
       '@testing-library/dom':
         specifier: ^10.4.0
@@ -135,6 +144,10 @@ importers:
         version: 2.1.9(@types/node@22.20.2)(jsdom@25.0.1(supports-color@7.2.0))(supports-color@7.2.0)
 
   packages/types:
+    dependencies:
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
     devDependencies:
       '@yearwise/config':
         specifier: workspace:*
@@ -2228,6 +2241,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
 snapshots:
 
   '@adobe/css-tools@4.5.0': {}
@@ -4120,3 +4136,5 @@ snapshots:
   xmlchars@2.2.0: {}
 
   yocto-queue@0.1.0: {}
+
+  zod@3.25.76: {}

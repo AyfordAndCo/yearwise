@@ -1,10 +1,11 @@
 import { MoneyText } from '@yearwise/ui';
 import { excludedFromNetWorthCount, netWorthMinor } from '@yearwise/logic';
 import type { NetWorthEntry } from '@yearwise/logic';
-import { WORKSPACE } from '@/lib/workspace';
 
 export interface NetWorthHeaderProps {
   entries: readonly NetWorthEntry[];
+  currency: string;
+  locale: string;
 }
 
 /**
@@ -13,7 +14,7 @@ export interface NetWorthHeaderProps {
  * Debt needs no special case here: it is already negative by the sign
  * convention, so net worth is a plain sum (FEAT-FIN-01).
  */
-export function NetWorthHeader({ entries }: NetWorthHeaderProps) {
+export function NetWorthHeader({ entries, currency, locale }: NetWorthHeaderProps) {
   const total = netWorthMinor(entries);
   const excluded = excludedFromNetWorthCount(entries);
 
@@ -22,7 +23,7 @@ export function NetWorthHeader({ entries }: NetWorthHeaderProps) {
       <div className="flex items-baseline gap-3">
         <span className="text-xs font-medium uppercase tracking-wide text-muted">Net worth</span>
         <span className="text-2xl font-semibold">
-          <MoneyText amountMinor={total} currency={WORKSPACE.currency} locale={WORKSPACE.locale} />
+          <MoneyText amountMinor={total} currency={currency} locale={locale} />
         </span>
       </div>
 

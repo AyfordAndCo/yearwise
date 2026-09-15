@@ -137,7 +137,6 @@ CREATE INDEX "Category_workspaceId_type_parentId_sortOrder_idx" ON "Category"("w
 -- hand-written: NULLS NOT DISTINCT, so two root categories (parentId IS NULL) in
 -- one workspace cannot share a name. Postgres treats NULLs as distinct by
 -- default, which would let them. Requires Postgres 15+, which Supabase runs.
-DROP INDEX "Category_workspaceId_parentId_name_key";
 CREATE UNIQUE INDEX "Category_workspaceId_parentId_name_key"
   ON "Category"("workspaceId", "parentId", "name") NULLS NOT DISTINCT;
 

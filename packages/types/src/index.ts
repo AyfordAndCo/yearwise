@@ -1,17 +1,15 @@
 /**
  * Shared contract types.
  *
- * BOUNDARY RULE (docs/01-architecture/monorepo.md):
- * this package imports nothing. It is a leaf. If it needs a runtime value,
- * that value belongs in @yearwise/logic, not here.
+ * BOUNDARY RULE (docs/01-architecture/monorepo.md): this package imports no
+ * other workspace package. It may depend on `zod`, because tech-stack.md places
+ * the API contracts here and a schema is a runtime value, not a type.
  *
- * This package will hold:
+ * What lives here:
  *   - the Zod schemas for every API request and response
- *   - TypeScript types inferred from those schemas
- *   - the shared enum unions: AccountType, TransactionKind, CategoryType
+ *   - the TypeScript types inferred from those schemas
  *
- * They are not defined yet because no API exists. Defining them before the
- * data model is translated into schema.prisma would guarantee rework.
+ * Money crosses this boundary as a string of minor units (A1, M4).
  */
 
-export const TYPES_PACKAGE_PENDING = 'defined alongside the first API route';
+export * from './account';

@@ -140,7 +140,6 @@ describe('AccountDrawer — editing', () => {
     openingDate: '2026-03-01',
     includeInNetWorth: true,
     isArchived: false,
-    transactionAmounts: [],
     balanceMinor: -50_000n,
   };
 
