@@ -47,9 +47,13 @@ const lightColours = {
 
   // Status
   info: '#1d6fb8',
+  infoDim: 'rgba(29, 111, 184, 0.10)',
   success: '#1e8449',
+  successDim: 'rgba(30, 132, 73, 0.10)',
   warning: '#9a6212',
+  warningDim: 'rgba(154, 98, 18, 0.12)',
   danger: '#b03a2e',
+  dangerDim: 'rgba(176, 58, 46, 0.10)',
 } as const;
 
 const darkColours = {
@@ -78,9 +82,13 @@ const darkColours = {
   moneyOutDim: 'rgba(248, 113, 113, 0.14)',
 
   info: '#6fa8dc',
+  infoDim: 'rgba(111, 168, 220, 0.16)',
   success: '#4ade80',
+  successDim: 'rgba(74, 222, 128, 0.14)',
   warning: '#d9a441',
+  warningDim: 'rgba(217, 164, 65, 0.16)',
   danger: '#e0735c',
+  dangerDim: 'rgba(224, 115, 92, 0.16)',
 } as const;
 
 const elevation = {

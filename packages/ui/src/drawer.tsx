@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent, ReactNode } from 'react';
+import { useId } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { usePrefersReducedMotion } from './use-prefers-reduced-motion';
+import { useModal } from './use-modal';
 import { useTheme } from './theme';
 import { tokens } from './tokens';
 
@@ -24,27 +24,13 @@ export interface DrawerProps {
   footer?: ReactNode;
 }
 
-const FOCUSABLE_SELECTOR = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]:not([tabindex="-1"])',
-].join(',');
-
-function getFocusable(root: HTMLElement): HTMLElement[] {
-  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-    (element) => element.offsetParent !== null || element === document.activeElement,
-  );
-}
-
 /**
  * A modal slide-over.
  *
  * The behaviour that matters is the keyboard contract, not the animation:
  * focus moves in on open, is trapped while open, returns to its origin on
- * close, `Escape` closes, and the page behind cannot scroll.
+ * close, `Escape` closes, and the page behind cannot scroll. That contract
+ * lives in `useModal`, shared with `ConfirmDialog`.
  */
 export function Drawer({
   open,
@@ -56,92 +42,10 @@ export function Drawer({
   footer,
 }: DrawerProps) {
   const { colours, elevation } = useTheme();
-  const reducedMotion = usePrefersReducedMotion();
-  const durationMs = reducedMotion ? 1 : 200;
-
-  const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const restoreFocusRef = useRef<HTMLElement | null>(null);
+  const { mounted, visible, durationMs, panelRef, handleKeyDown } = useModal(open, onClose);
 
   const titleId = useId();
   const descriptionId = useId();
-
-  // Mount, animate out, and hand focus back to whatever opened the drawer.
-  useEffect(() => {
-    if (open) {
-      restoreFocusRef.current =
-        typeof document === 'undefined' ? null : (document.activeElement as HTMLElement | null);
-      setMounted(true);
-      return undefined;
-    }
-
-    setVisible(false);
-    const timer = window.setTimeout(() => setMounted(false), durationMs);
-    restoreFocusRef.current?.focus();
-    restoreFocusRef.current = null;
-    return () => window.clearTimeout(timer);
-  }, [open, durationMs]);
-
-  // Animate in on the frame after the panel exists, so the transition runs.
-  useEffect(() => {
-    if (!open || !mounted) return undefined;
-    const frame = window.requestAnimationFrame(() => setVisible(true));
-    return () => window.cancelAnimationFrame(frame);
-  }, [open, mounted]);
-
-  // Lock the page behind the drawer.
-  useEffect(() => {
-    if (!open) return undefined;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previous;
-    };
-  }, [open]);
-
-  // Move focus into the drawer once it exists.
-  useEffect(() => {
-    if (!open || !mounted) return undefined;
-    const panel = panelRef.current;
-    if (panel === null) return undefined;
-    const focusable = getFocusable(panel);
-    (focusable[0] ?? panel).focus();
-    return undefined;
-  }, [open, mounted]);
-
-  const handleKeyDown = useCallback(
-    (event: ReactKeyboardEvent<HTMLDivElement>) => {
-      if (event.key === 'Escape') {
-        event.stopPropagation();
-        onClose();
-        return;
-      }
-
-      if (event.key !== 'Tab') return;
-
-      const panel = panelRef.current;
-      if (panel === null) return;
-
-      const focusable = getFocusable(panel);
-      if (focusable.length === 0) {
-        event.preventDefault();
-        return;
-      }
-
-      const first = focusable[0]!;
-      const last = focusable[focusable.length - 1]!;
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    },
-    [onClose],
-  );
 
   if (!mounted) return null;
 
@@ -165,9 +69,7 @@ export function Drawer({
     color: colours.foreground,
     boxShadow: elevation.floating,
     outline: 'none',
-    transition: reducedMotion
-      ? 'none'
-      : `transform ${durationMs}ms ${tokens.motion.easing.out}`,
+    transition: `transform ${durationMs}ms ${tokens.motion.easing.out}`,
     ...(isRight
       ? {
           top: 0,
@@ -224,7 +126,7 @@ export function Drawer({
     lineHeight: 1,
     color: colours.muted,
     background: 'transparent',
-    border: `1px solid transparent`,
+    border: '1px solid transparent',
     borderRadius: tokens.radius.sm,
     cursor: 'pointer',
   };

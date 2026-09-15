@@ -136,6 +136,10 @@ re-implemented per screen.
 | `warning` | `#9a6212` | `#d9a441` | Advisories, e.g. a transaction before `openingDate` |
 | `danger` | `#b03a2e` | `#e0735c` | Destructive confirmations, validation failure |
 
+Each status tone also has a `…Dim` variant (`infoDim`, `successDim`, `warningDim`,
+`dangerDim`) at 10–16% opacity, for the subtle `Badge` background. `tint` is the primary
+tone's dim variant.
+
 `warning` is a dark amber on light specifically so it passes contrast as text. It is
 deliberately not the accent green, so an advisory never reads as a primary action.
 
@@ -339,19 +343,23 @@ Three layers, matching the decision rule *low-level visual → `ui`; page/app st
 
 ### 11.1 `packages/ui` — primitives
 
-**Built:** `ThemeProvider` · `useTheme` · `usePrefersReducedMotion` · `controlStyle` ·
-`useControlFocus` · `Button` · `Input` · `Select` · `DateField` · `FormField` · `Card` ·
-`MoneyText` · `Drawer` · `Table` · `ChartFrame` · `EmptyState` · `Toast` · `ToastRegion`
+**Built:** `ThemeProvider` · `useTheme` · `usePrefersReducedMotion` · `useModal` ·
+`getFocusable` · `controlStyle` · `useControlFocus` · `Button` · `Input` · `Select` ·
+`DateField` · `FormField` · `SegmentedControl` · `MultiSelect` · `AccountMultiSelect` ·
+`CategoryMultiSelect` · `Badge` · `Card` · `MoneyText` · `Tooltip` · `Menu` · `Drawer` ·
+`ConfirmDialog` · `Table` · `ChartFrame` · `EmptyState` · `Skeleton` · `Toast` ·
+`ToastRegion`
 
 **Planned:** `IconButton` · `Textarea` · `Combobox` · `Checkbox` · `Radio` · `Switch` ·
-`SegmentedControl` · `Label` · `HelpText` · `ErrorText` · `DateRangeField` · `Badge` ·
-`Chip` · `Divider` · `Tooltip` · `Popover` · `Menu` · `Dialog` · `Skeleton` · `Spinner` ·
-`Progress` · `Avatar` · `Tabs` · `Pagination` · `Callout` · `PercentText` · `DonutChart` ·
-`BarChart`
+`Label` · `HelpText` · `ErrorText` · `DateRangeField` · `Chip` · `Divider` · `Popover` ·
+`Spinner` · `Progress` · `Avatar` · `Tabs` · `Pagination` · `Callout` · `PercentText` ·
+`DonutChart` · `BarChart`
 
-Phase 1's stated deliverable was `Button`, `Input`, `Select`, `Drawer`, `DataTable`,
-`EmptyState`, `Toast` - all now exist. `DataTable` is `Table` plus the ledger's
-pagination and grouping; grouping is built, pagination is the caller's cursor. See
+Every primitive Phase 1 names now exists. A generic `Dialog` is not planned: `Drawer` and
+`ConfirmDialog` cover the two modal shapes the product has, and both share one focus trap
+through `useModal`, so a third modal would be a third chance to get the trap wrong.
+`DataTable` is `Table` plus the ledger's pagination and grouping; grouping is built,
+pagination is the caller's cursor. See
 [`packages/ui/README.md`](../../packages/ui/README.md) for props and usage.
 
 ### 11.2 `apps/web` — `common/` (reusable, application-aware)
@@ -373,7 +381,7 @@ pagination and grouping; grouping is built, pagination is the caller's cursor. S
 | G2 | Tokens are hand-duplicated between `packages/ui/src/tokens.ts` and `apps/web/app/globals.css`. | Two sources of truth drift silently. | Phase 1: generate the CSS variables from the JS tokens (or vice versa) in the build. |
 | G3 | Phase 1's stated primitive set is complete. `Combobox`, `Checkbox`, `Radio`, `SegmentedControl`, `Badge`, `Tooltip`, `Menu` and `Dialog` are not built. | Several components in section 11.2 depend on them. | Build in dependency order as screens need them, not speculatively. |
 | G4 | `ChartFrame` frames a chart, but `DonutChart` and `BarChart` do not exist. | The dashboard cannot be built yet. | Choose the charting library (section 14), then build the two charts against `ChartFrame`. |
-| G5 | No component test suite. | Focus trap and money formatting are asserted by typecheck and lint only. | Add `vitest` + Testing Library; start with `MoneyText`, `Drawer` focus trap and `Table` grouping. |
+| G5 | **Partly resolved.** `vitest` + Testing Library are wired with hook linting on; `MoneyText`, `Drawer` and `Table` are covered (35 tests). | `Toast` timing, `Menu` keyboard navigation, `ConfirmDialog`, `FormField` wiring and the multi-selects are untested. | Extend the suite. The harness and its conventions are in `packages/ui/README.md` section 7. |
 | G6 | Contrast ratios are target values, not measured. | A pairing could fail AA unnoticed. | Add a token contrast test that fails the build. |
 | G7 | Inline styling means `:hover`/`:focus-visible` are React-state driven. | A focus ring also appears on pointer focus. | Acceptable; revisit with a CSS layer if it becomes noticeable. |
 

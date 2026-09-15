@@ -576,7 +576,7 @@ Every screen must satisfy this table. A screen missing a cell is not done.
 | # | Current state | Needed | Action |
 |---|---|---|---|
 | G1 | **Resolved.** Tokens are light-first green (`#1f6f5c`) and now carry the full semantic set: money, status, lines, focus, tint, elevation and motion. | Light and green is the brand (D7). | Closed. `design-system.md` was corrected to match the code, not the reverse. |
-| G2 | Primitives now include `MoneyText`, `Drawer`, `Table`, `ChartFrame`, `Select`, `DateField`, `FormField`, `EmptyState` and `Toast` alongside `Button`, `Input`, `Card`. | Still missing: the multi-select pickers (`AccountMultiSelect`, `CategoryMultiSelect`), `SegmentedControl`, `Badge`, `Tooltip`, `Menu`, `ConfirmDialog`, `Skeleton`. | Build in dependency order as screens need them. |
+| G2 | Every primitive Phase 1 names is built, plus `MoneyText`, `ChartFrame`, `Badge`, `Tooltip`, `Menu`, `ConfirmDialog`, `Skeleton` and the multi-select pickers. | Still missing: `Combobox` (searchable single-select), `Checkbox`/`Radio`/`Switch`, `Popover`, `DateRangeField`, `Tabs`. | Build in dependency order as screens need them. |
 | G3 | `apps/web` routes: `/`, `/login`, `/dashboard` as placeholders. `/dashboard` now renders the money pipeline end to end. | Plus `/signup`, `/setup`, `/transactions`, `/accounts`, `/categories`, `/settings`. | Phase 1 build order in `phase-1-financial-core.md` §Build order. |
 | G4 | No `CategoryPicker`, and no concrete chart (`ChartFrame` frames one). | Both, plus the Recharts decision. | Resolve design-system §14.1. |
 | G5 | No app shell (no Sidebar / TopBar). | `AppShell` per §3. | Build with the first authenticated screen. |

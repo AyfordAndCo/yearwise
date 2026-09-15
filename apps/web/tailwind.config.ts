@@ -29,9 +29,13 @@ const config: Config = {
         'money-out': 'var(--money-out)',
 
         info: 'var(--info)',
+        'info-dim': 'var(--info-dim)',
         success: 'var(--success)',
+        'success-dim': 'var(--success-dim)',
         warning: 'var(--warning)',
+        'warning-dim': 'var(--warning-dim)',
         danger: 'var(--danger)',
+        'danger-dim': 'var(--danger-dim)',
       },
     },
   },

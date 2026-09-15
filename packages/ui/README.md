@@ -443,6 +443,184 @@ diverge from the built-in ones:
 `Input`, `Select` and `DateField` are all built on these. A divergent control is the most
 visible kind of design-system failure, so the base lives in one place.
 
+### 4.12 `Badge`
+
+```tsx
+<Badge tone="primary">Cheque account</Badge>
+<Badge tone="warning" variant="solid">Archived</Badge>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `tone` | `'neutral' \| 'primary' \| 'info' \| 'success' \| 'warning' \| 'danger'` | `'neutral'` |
+| `variant` | `'subtle' \| 'solid'` | `'subtle'` |
+
+A short status label. Not for money and not for actions - a badge that needs a click is a
+`Button`. Use `solid` for one badge at a time.
+
+### 4.13 `Skeleton`
+
+```tsx
+<Skeleton width="12rem" />
+<Skeleton height="2rem" radius="md" />
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `width` | `string \| number` | `'100%'` |
+| `height` | `string \| number` | `'0.75rem'` |
+| `radius` | `'sm' \| 'md' \| 'lg' \| 'full'` | `'sm'` |
+
+Shape it like the content it replaces. A skeleton that does not match the final layout is
+worse than a spinner, because the page shifts as data lands. The shimmer keyframe
+(`yw-shimmer`) is declared by the consuming app; without it the block still renders, it
+just does not animate.
+
+### 4.14 `SegmentedControl`
+
+```tsx
+<SegmentedControl
+  label="Transaction kind"
+  value={kind}
+  onValueChange={setKind}
+  options={[
+    { value: 'ALL', label: 'All' },
+    { value: 'INCOME', label: 'Income' },
+    { value: 'EXPENSE', label: 'Expense' },
+  ]}
+/>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `label` | `string` | required |
+| `options` | `{ value, label, disabled? }[]` | required |
+| `value` | `string` | required |
+| `onValueChange` | `(value: string) => void` | required |
+| `size` | `'sm' \| 'md'` | `'md'` |
+
+A radio group, not a set of toggle buttons: `role="radiogroup"` with `role="radio"`,
+`aria-checked`, arrow-key navigation and a single tab stop.
+
+### 4.15 `Tooltip`
+
+```tsx
+<Tooltip content="Balances are derived, never stored">
+  <Badge>Derived</Badge>
+</Tooltip>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `content` | `ReactNode` | required |
+| `children` | `ReactNode` | required |
+| `placement` | `'top' \| 'bottom'` | `'top'` |
+
+Shown on hover **and** focus, so it is reachable by keyboard. The trigger is cloned to
+receive `aria-describedby`, because an attribute on a wrapping span is not announced for
+the control inside it. Never make a tooltip the only home for information a user needs -
+it is unreachable on touch.
+
+### 4.16 `Menu`
+
+```tsx
+<Menu
+  label="Row actions"
+  items={[
+    { key: 'edit', label: 'Edit', onSelect: () => open(row) },
+    { key: 'duplicate', label: 'Duplicate', onSelect: () => duplicate(row) },
+    { key: 'delete', label: 'Delete', tone: 'danger', onSelect: () => remove(row) },
+  ]}
+/>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `label` | `string` | required |
+| `items` | `{ key, label, onSelect, tone?, disabled? }[]` | required |
+| `trigger` | `ReactNode` | `⋯` |
+| `align` | `'start' \| 'end'` | `'end'` |
+
+Rendered into a portal with fixed positioning, because the ledger's rows live in a
+scrolling, clipped container and an absolutely positioned menu would be cut off at the
+table edge. `ArrowDown` opens, arrows and Home/End move within, `Escape` closes and
+returns focus to the trigger, `Tab` closes, an outside click closes.
+
+### 4.17 `ConfirmDialog`
+
+```tsx
+<ConfirmDialog
+  open={confirming}
+  onClose={() => setConfirming(false)}
+  onConfirm={archive}
+  title="Archive this account?"
+  description="Its transactions stay in the ledger, but the balance stops counting toward net worth."
+  confirmLabel="Archive"
+  tone="danger"
+/>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `open` | `boolean` | required |
+| `onClose` | `() => void` | required |
+| `onConfirm` | `() => void` | required |
+| `title` | `string` | required |
+| `description` | `string` | — |
+| `confirmLabel` | `string` | `'Confirm'` |
+| `cancelLabel` | `string` | `'Cancel'` |
+| `tone` | `'default' \| 'danger'` | `'default'` |
+
+`role="alertdialog"`, because the user must respond before doing anything else. Cancel
+renders first so it takes initial focus - the safe default when the action is
+destructive. The modal contract comes from the same `useModal` as `Drawer`.
+
+### 4.18 `MultiSelect`
+
+```tsx
+<MultiSelect
+  label="Accounts"
+  options={[{ value: 'a1', label: 'Main Cheque' }]}
+  value={accountIds}
+  onValueChange={setAccountIds}
+  placeholder="All accounts"
+/>
+```
+
+| Prop | Type | Default |
+|---|---|---|
+| `label` | `string` | required |
+| `options` | `{ value, label, depth?, disabled? }[]` | required |
+| `value` | `string[]` | required |
+| `onValueChange` | `(value: string[]) => void` | required |
+| `placeholder` | `string` | `'All'` |
+| `maxLabels` | `number` | `2` |
+
+Native checkboxes inside a `<label>`, so selection is keyboard- and screen-reader-correct
+without custom key handling. The trigger is a single button that summarises the selection
+as text - removable chips are `FilterChip`'s job, because a button containing buttons is
+invalid. `depth: 1` indents an option under the one above it.
+
+### 4.19 `AccountMultiSelect` and `CategoryMultiSelect`
+
+Thin domain adapters over `MultiSelect`, taking structural props so they need no domain
+type from `@yearwise/types` (which is deliberately still empty).
+
+```tsx
+<AccountMultiSelect accounts={accounts} value={accountIds} onValueChange={setAccountIds} />
+<CategoryMultiSelect categories={categories} value={categoryIds} onValueChange={setCategoryIds} />
+```
+
+Two rules live here rather than in the generic primitive:
+
+- **Archived accounts stay selectable** in the account filter, labelled `(archived)`.
+  Filtering to an archived account is how a user reads its history, which archiving
+  preserves (A4). The "never offered for a new transaction" rule applies to entry forms.
+- **`CategoryMultiSelect` does not rewrite `value`** to include children. The selection is
+  what the user made; the expansion happens in the query layer through
+  `resolveCategoryIds` from `@yearwise/logic`, which is what makes "Food" match Food and
+  every child of Food (FEAT-FIN-03).
+
 ---
 
 ## 5. Conventions
@@ -471,17 +649,70 @@ visible kind of design-system failure, so the base lives in one place.
 5. Style from `useTheme()` and `tokens`. No hardcoded values.
 6. Export the component and its prop types from `src/index.ts`.
 7. Add it to the catalogue in section 4 of this README.
-8. Verify: `pnpm --filter @yearwise/ui typecheck && pnpm --filter @yearwise/ui lint`.
+8. Add a test under `tests/` covering the rule it exists to enforce, not just that it
+   renders (section 7).
+9. Verify: `pnpm --filter @yearwise/ui typecheck && pnpm --filter @yearwise/ui lint && pnpm --filter @yearwise/ui test`.
 
 ---
 
-## 7. Known limitations
+## 7. Testing
+
+`vitest` + Testing Library, in **jsdom**, with React hook linting on.
+
+```bash
+pnpm --filter @yearwise/ui test          # once
+pnpm --filter @yearwise/ui test:watch    # watch
+```
+
+`vitest.config.ts` sets `environment: 'jsdom'` and compiles JSX through esbuild with the
+automatic runtime, so no Babel or React plugin is needed. `tests/setup.ts` registers the
+jest-dom matchers and calls `cleanup()` after each test - globals are off, so Testing
+Library's automatic cleanup does not register itself, and without it every render leaks
+into the next test.
+
+### What is covered, and why these three
+
+| File | Covers |
+|---|---|
+| `tests/money-text.test.tsx` | The minus sign is U+2212; the debt flip renders a card balance as positive and "owed"; the tone mapping for in/out/zero; an explicit tone wins; the `aria-label` states direction; digits survive past 2^53. |
+| `tests/drawer.test.tsx` | Dialog semantics, `Escape`, overlay click, focus moves in, an `autoFocus`ed field is not overridden, the trap wraps in both directions, focus returns to the opener, body scroll is locked and released. |
+| `tests/table.test.tsx` | Header and row counts, right-alignment, one group header per group (not per row), group header spans every column, skeleton rows while loading, the empty slot only when not loading, click and Enter/Space activation, rows focusable only when activatable. |
+
+These are the three highest-risk behaviours in the package: money rendered wrong is the
+product's worst defect, a broken focus trap locks a keyboard user inside a drawer, and a
+table that groups per row instead of per group quietly misreads the ledger.
+
+### Writing a test
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import { ThemeProvider } from '../src/theme';
+
+render(<ThemeProvider>{ui}</ThemeProvider>);
+```
+
+Two rules:
+
+1. **Always wrap in `ThemeProvider`** - every primitive reads colours from context and
+   throws without it.
+2. **Never assert an exact `Intl` string.** `formatMoney` output varies with the ICU
+   build, which is why the logic package asserts digits only. Assert digits, signs, tone
+   and structure - the things that are actually rules.
+
+Prefer `fireEvent.keyDown` over `userEvent.tab()` for the focus trap: user-event computes
+its own focusable set, which need not agree with ours, so it can mask a regression.
+
+---
+
+## 8. Known limitations
 
 | # | Limitation | Consequence |
 |---|---|---|
 | L1 | Styling is inline, so `:hover` and `:focus-visible` are driven by React state. | Hover and focus are applied via `onMouseEnter`/`onFocus` rather than CSS, so a focus ring appears on pointer focus too. A CSS layer with `data-*` hooks is the fix if that matters. |
-| L2 | No test suite yet. | Behaviour (focus trap, money formatting) is asserted only by typecheck and lint. `vitest` + Testing Library is the next step. |
-| L3 | Form primitives are partial. | `Select`, `FormField` and `DateField` exist. `Combobox`, `Checkbox`, `Radio`, `Switch`, `SegmentedControl`, `Textarea` and `DateRangeField` are planned (design-system section 11) and not built. |
+| L2 | Test coverage is three components deep. | `MoneyText`, `Drawer` and `Table` are covered. `Toast` timing, `Menu` keyboard navigation, `ConfirmDialog`, `FormField` wiring and the multi-selects are not. |
+| L3 | Form primitives are partial. | `Select`, `FormField` and `DateField` exist. `Combobox`, `Checkbox`, `Radio`, `Switch`, `Textarea` and `DateRangeField` are planned (design-system section 11) and not built. `SegmentedControl` and `Badge` are built. |
 | L4 | Tokens are duplicated between `tokens.ts` and `globals.css`. | The two can drift. Generate one from the other in Phase 1. |
 | L5 | No chart implementations. | `ChartFrame` frames a chart; `DonutChart` and `BarChart` do not exist yet, pending the charting-library decision. |
 | L6 | Contrast ratios are intended, not measured. | Add a token contrast test that fails the build (design-system G6). |
+| L7 | The `Skeleton` shimmer depends on a keyframe the app declares. | `packages/ui` cannot declare CSS keyframes, so `yw-shimmer` lives in `apps/web/app/globals.css`. Without it the skeleton renders static. |
+| L8 | `Menu` and `MultiSelect` position by measuring on open only. | They do not reposition on scroll or resize while open. Acceptable for Phase 1; a floating-position library is the fix if it becomes visible. |

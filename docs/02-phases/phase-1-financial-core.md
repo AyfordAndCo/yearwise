@@ -41,7 +41,7 @@ If it is not in the in-scope table above, it is not in this phase.
 - [ ] Staging deployment, updated on merge to `main`
 - [ ] Schema and migrations for the Phase 1 tables in `docs/01-architecture/data-model.md`
 - [ ] RLS policies on every table, with a test proving user A cannot read user B's rows
-- [ ] `packages/logic`: `money.ts` (`parseMoney`, `formatMoney`, `sumMinor`), `date.ts` (calendar-date helpers), `categoryTree.ts`
+- [x] `packages/logic`: `money.ts` (`parseMoney`, `formatMoney`, `sumMinor`), `date.ts` (calendar-date helpers), `category-tree.ts` (`buildCategoryRows`, `resolveCategoryIds`, `childIds`)
 - [x] `packages/ui`: design tokens for the light and green brand (D7), plus `Button`, `Input`, `MoneyText`, `Drawer`, `Table`, `ChartFrame`. `Select`, `EmptyState` and `Toast` still to build.
 - [ ] Six screens: Dashboard, Transactions, Accounts, Categories, Settings, Setup wizard
 - [ ] Seed script: default categories, plus a demo workspace for development

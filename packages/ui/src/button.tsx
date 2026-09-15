@@ -4,14 +4,20 @@ import type { ButtonHTMLAttributes, CSSProperties, ReactNode } from 'react';
 import { useTheme } from './theme';
 import { tokens } from './tokens';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   children: ReactNode;
 }
 
-export function Button({ variant = 'primary', children, type = 'button', ...rest }: ButtonProps) {
+export function Button({
+  variant = 'primary',
+  children,
+  type = 'button',
+  style,
+  ...rest
+}: ButtonProps) {
   const { colours } = useTheme();
 
   const base: CSSProperties = {
@@ -40,10 +46,17 @@ export function Button({ variant = 'primary', children, type = 'button', ...rest
       color: colours.foreground,
       borderColor: 'transparent',
     },
+    danger: {
+      background: colours.danger,
+      color: colours.background,
+      borderColor: colours.danger,
+    },
   };
 
+  // `style` is merged rather than spread, so a caller can extend a variant
+  // instead of silently replacing every base style.
   return (
-    <button type={type} style={{ ...base, ...variants[variant] }} {...rest}>
+    <button type={type} style={{ ...base, ...variants[variant], ...style }} {...rest}>
       {children}
     </button>
   );
