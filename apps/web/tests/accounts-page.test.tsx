@@ -2,14 +2,14 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { ThemeProvider } from '@yearwise/ui';
 import AccountsPage from '@/app/(app)/accounts/page';
-import { AccountsProvider } from '@/lib/accounts-store';
+import { WorkspaceProvider } from '@/lib/workspace-store';
 
 function renderPage() {
   return render(
     <ThemeProvider>
-      <AccountsProvider>
+      <WorkspaceProvider>
         <AccountsPage />
-      </AccountsProvider>
+      </WorkspaceProvider>
     </ThemeProvider>,
   );
 }

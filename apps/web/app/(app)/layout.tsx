@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { AppShell } from '@/components/layout/app-shell';
-import { AccountsProvider } from '@/lib/accounts-store';
+import { WorkspaceProvider } from '@/lib/workspace-store';
 
 /**
  * The authenticated route group.
@@ -13,8 +13,8 @@ import { AccountsProvider } from '@/lib/accounts-store';
  */
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <AccountsProvider>
+    <WorkspaceProvider>
       <AppShell>{children}</AppShell>
-    </AccountsProvider>
+    </WorkspaceProvider>
   );
 }

@@ -17,12 +17,12 @@ import { NetWorthHeader } from '@/components/common/net-worth-header';
 import { PageContainer } from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
 import { ACCOUNT_TYPE_LABELS } from '@/lib/account-types';
-import { useAccounts } from '@/lib/accounts-store';
-import type { AccountInput, AccountView } from '@/lib/accounts-store';
+import { useWorkspace } from '@/lib/workspace-store';
+import type { AccountInput, AccountView } from '@/lib/workspace-store';
 import { WORKSPACE } from '@/lib/workspace';
 
 export default function AccountsPage() {
-  const { accounts, createAccount, updateAccount, setArchived } = useAccounts();
+  const { accounts, createAccount, updateAccount, setArchived } = useWorkspace();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<AccountView | undefined>(undefined);

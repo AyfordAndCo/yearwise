@@ -5,14 +5,14 @@ import { Button, DateField, Drawer, FormField, Input, Select } from '@yearwise/u
 import {
   MoneyParseError,
   isDebtAccount,
-  minorUnitScale,
   openingBalanceMinorFromInput,
   parseMoney,
   todayIso,
 } from '@yearwise/logic';
 import type { AccountKind } from '@yearwise/logic';
 import { ACCOUNT_TYPE_OPTIONS } from '@/lib/account-types';
-import type { AccountInput, AccountView } from '@/lib/accounts-store';
+import { splitSign, toInputText } from '@/lib/money-input';
+import type { AccountInput, AccountView } from '@/lib/workspace-store';
 import { WORKSPACE } from '@/lib/workspace';
 
 export interface AccountDrawerProps {
@@ -22,25 +22,6 @@ export interface AccountDrawerProps {
   account?: AccountView | undefined;
   onSubmit: (input: AccountInput) => void;
 }
-
-/** Minor units to a plain decimal string, for a text input. */
-function toInputText(amountMinor: bigint, currency: string): string {
-  const scale = minorUnitScale(currency);
-  const negative = amountMinor < 0n;
-  const absolute = negative ? -amountMinor : amountMinor;
-  const divisor = 10n ** BigInt(scale);
-  const whole = absolute / divisor;
-  const fraction = absolute % divisor;
-
-  const body =
-    scale === 0
-      ? whole.toString()
-      : `${whole.toString()}.${fraction.toString().padStart(scale, '0')}`;
-
-  return negative ? `-${body}` : body;
-}
-
-const MINUS = '\u2212';
 
 /**
  * Create and edit share one surface, so the fields cannot diverge.
@@ -90,8 +71,7 @@ export function AccountDrawer({ open, onClose, account, onSubmit }: AccountDrawe
       nextErrors.name = 'Give the account a name';
     }
 
-    const trimmed = balanceText.trim();
-    const typedNegative = trimmed.startsWith('-') || trimmed.startsWith(MINUS);
+    const { digits, negative: typedNegative } = splitSign(balanceText);
 
     let openingBalanceMinor = 0n;
 
@@ -99,9 +79,7 @@ export function AccountDrawer({ open, onClose, account, onSubmit }: AccountDrawe
       nextErrors.balance = 'Enter the amount owed as a positive number';
     } else {
       try {
-        const magnitude = parseMoney(typedNegative ? trimmed.slice(1) : trimmed, WORKSPACE.currency, {
-          allowZero: true,
-        });
+        const magnitude = parseMoney(digits, WORKSPACE.currency, { allowZero: true });
         const signed = typedNegative ? -magnitude : magnitude;
         // The debt-vs-asset sign rule lives in packages/logic, where it is
         // tested. This drawer only handles the text and the optional minus.

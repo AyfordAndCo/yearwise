@@ -2,7 +2,7 @@
 
 import { MoneyText } from '@yearwise/ui';
 import { netWorthMinor } from '@yearwise/logic';
-import { useAccounts } from '@/lib/accounts-store';
+import { useWorkspace } from '@/lib/workspace-store';
 import { WORKSPACE } from '@/lib/workspace';
 import { NavLinks } from './nav-links';
 
@@ -14,7 +14,7 @@ import { NavLinks } from './nav-links';
  * viewports; a mobile tab bar is an open question in the design system.
  */
 export function Sidebar() {
-  const { accounts } = useAccounts();
+  const { accounts } = useWorkspace();
 
   const netWorth = netWorthMinor(
     accounts.map((account) => ({

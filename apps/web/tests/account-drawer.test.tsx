@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@yearwise/ui';
 import { AccountDrawer } from '@/components/common/account-drawer';
-import type { AccountView } from '@/lib/accounts-store';
+import type { AccountView } from '@/lib/workspace-store';
 
 function renderDrawer(account?: AccountView) {
   const onSubmit = vi.fn();
