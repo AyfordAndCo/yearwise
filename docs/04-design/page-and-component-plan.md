@@ -577,12 +577,14 @@ Every screen must satisfy this table. A screen missing a cell is not done.
 |---|---|---|---|
 | G1 | **Resolved.** Tokens are light-first green (`#1f6f5c`) and now carry the full semantic set: money, status, lines, focus, tint, elevation and motion. | Light and green is the brand (D7). | Closed. `design-system.md` was corrected to match the code, not the reverse. |
 | G2 | Every primitive Phase 1 names is built, plus `MoneyText`, `ChartFrame`, `Badge`, `Tooltip`, `Menu`, `ConfirmDialog`, `Skeleton` and the multi-select pickers. | Still missing: `Combobox` (searchable single-select), `Checkbox`/`Radio`/`Switch`, `Popover`, `DateRangeField`, `Tabs`. | Build in dependency order as screens need them. |
-| G3 | `apps/web` routes: `/`, `/login`, `/dashboard` as placeholders. `/dashboard` now renders the money pipeline end to end. | Plus `/signup`, `/setup`, `/transactions`, `/accounts`, `/categories`, `/settings`. | Phase 1 build order in `phase-1-financial-core.md` §Build order. |
+| G3 | All seven routes exist: `/`, `/login` and, in the `(app)` route group, `/dashboard`, `/transactions`, `/accounts`, `/categories`, `/settings`. `/accounts` is a working slice. | `/signup` and `/setup` are still missing, because both need auth. | Phase 1 build order in `phase-1-financial-core.md` §Build order. |
 | G4 | No `CategoryPicker`, and no concrete chart (`ChartFrame` frames one). | Both, plus the Recharts decision. | Resolve design-system §14.1. |
-| G5 | No app shell (no Sidebar / TopBar). | `AppShell` per §3. | Build with the first authenticated screen. |
+| G5 | **Resolved.** `AppShell`, `Sidebar` (nav plus the net-worth footer), `TopBar` (identity and New transaction), `PageHeader` and `PageContainer` are built, with a compact navigation row below `md`. | A mobile tab bar is still open (design-system §14.4). | — |
 | G6 | `packages/logic` has money and date helpers; no `categoryTree.ts`. | `categoryTree.ts` (Phase 1 deliverable) for rollup and descendant resolution. | Needed by `CategoryPicker`, category filter and the donut rollup. |
 | G7 | Focus ring token now exists (`colours.focus`, used by `Table` rows and `Drawer`). | Contrast test and a `FormField` that centralises focus and error wiring. | design-system G6. |
 | G8 | Tokens are duplicated between `tokens.ts` and `globals.css`. | Generated from one source. | design-system G2. |
+| G9 | `/accounts` reads an **in-memory store** (`apps/web/lib/accounts-store.tsx`) seeded with demo data. | Balances are derived correctly and create/edit/archive work, but nothing persists, and there is no session. | Swap for Postgres reads and writes when FEAT-ACC-01 and the database land. The screens consume `AccountView`, which does not change. |
+| G10 | `/dashboard`, `/transactions`, `/categories` and `/settings` are placeholder screens. | The navigation is honest rather than 404-ing, but only Accounts does anything. | Phase 1 build order, steps 3 onwards. |
 
 ---
 
